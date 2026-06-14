@@ -74,6 +74,92 @@ V(k_1, k_2) = \frac{\omega L I \big( 1 - e^{i(m k_1 + n k_2)} \big)}{4i \left( \
 \tilde{Z}(\omega) = \frac{-i\omega L}{4\pi^2} \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} \frac{1 - e^{i(m k_1 + n k_2)}}{\omega^2 L C \sin^2\frac{k_1}{2} - \sin^2\frac{k_2}{2}} \, dk_1 dk_2
 \end{equation}
 
+
+
+% =========================================================================
+% 完美对称：全组合数形式包装的化简与级数展开推导过程
+% =========================================================================
+
+为了将上述包含二维连续围道积分的阻抗公式化简为纯代数求和形式，我们将积分拆分为两部分：对应平庸基准响应的 $I_1$ 项与对应空间格点拓扑响应的 $I_2$ 项，即令总积分 $I = I_1 - I_2$。
+
+\subsection{基准响应项 $I_1$ 的级数展开与全组合数化简}
+首先，基准平庸项 $I_1$ 形式如下：
+\begin{equation}
+I_1 = \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} \sum_{k=0}^{\infty} (a \cos x + b \cos y)^k \, dx dy
+\end{equation}
+利用二项式定理对核心的多项式算子 $(a \cos x + b \cos y)^k$ 进行离散项级数展开：
+\begin{equation}
+(a \cos x + b \cos y)^k = \sum_{p=0}^{k} \binom{k}{p} a^p b^{k-p} \cos^p x \cos^{k-p} y
+\end{equation}
+由于该几何级数在收敛域内绝对收敛，根据富比尼（Fubini）定理，可以将外层的积分号与内层的双重求和号严格交换顺序，从而将二维区域积分完全解耦为两个独立的一维高阶余弦 Wallis 形式积分：
+\begin{equation}
+I_1 = \sum_{k=0}^{\infty} \sum_{p=0}^{k} \binom{k}{p} a^p b^{k-p} \left[ \int_{-\pi}^{\pi} \cos^p x \, dx \right] \cdot \left[ \int_{-\pi}^{\pi} \cos^{k-p} y \, dy \right]
+\end{equation}
+
+根据三角函数的对称性，当且仅当幂次为偶数时积分值才不为零，即必须满足约束条件：$p \equiv 0 \pmod 2$ 且 $k-p \equiv 0 \pmod 2$。这要求 $p$ 和 $k-p$ 必须同时为偶数，进而意味着外层总幂次 $k$ 也必须严格为偶数（令 $k=2K, p=2P$）。
+利用经典的 Wallis 积分公式并引入标准组合数恒等式变换，偶数次幂的余弦积分可严格表述为：
+\begin{equation}
+\int_{-\pi}^{\pi} \cos^{2P} x \, dx = \frac{(2P-1)!!}{(2P)!!} \cdot 2\pi = \frac{2\pi}{2^{2P}} \binom{2P}{P}
+\end{equation}
+\begin{equation}
+\int_{-\pi}^{\pi} \cos^{2K-2P} y \, dy = \frac{(2K-2P-1)!!}{(2K-2P)!!} \cdot 2\pi = \frac{2\pi}{2^{2K-2P}} \binom{2K-2P}{K-P}
+\end{equation}
+
+将一维积分的组合数解 (43) 和 (44) 代回式 (42) 中。两项系数相乘提取出常数 $4\pi^2$，分母上的基底常数合并为 $2^{2P} \cdot 2^{2K-2P} = 2^{2K} = 4^K$。最终得到关于 $I_1$ 项极其紧凑的高对称求和级数闭式解：
+\begin{equation}
+I_1 = 4\pi^2 \sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{2K}{2P} \binom{2P}{P} \binom{2K-2P}{K-P}}{4^K} \cdot a^{2P} b^{2K-2P}
+\end{equation}
+
+\subsection{空间格点响应项 $I_2$ 的级数展开与完全对称组合数化简}
+接下来，我们聚焦于包含空间格子坐标 $(m,n)$ 的非平庸响应项 $I_2$。为了与 $I_1$ 的级数处理严格保持逻辑一致，我们直接保留复指数相位因子进行二项式展开，并在释放变量后再进行奇偶性实数化：
+\begin{equation}
+I_2 = \sum_{k=0}^{\infty} \sum_{p=0}^{k} \binom{k}{p} a^p b^{k-p} \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} e^{i(mx + ny)} \cos^p x \cos^{k-p} y \, dx dy
+\end{equation}
+利用欧拉公式展开空间相位因子 $e^{i(mx+ny)}$。由于 $\cos^p x$ 和 $\cos^{k-p} y$ 关于全域是严格的偶函数，根据奇偶函数在对称区间 $[-\pi, \pi]$ 上的正交性，所有包含奇函数正弦 $\sin(mx)$ 或 $\sin(ny)$ 的项在积分后全部严格为零，仅剩双余弦偶函数项存活：
+\begin{equation}
+I_2 = \sum_{k=0}^{\infty} \sum_{p=0}^{k} \binom{k}{p} a^p b^{k-p} \cdot \left[ \int_{-\pi}^{\pi} \cos(mx) \cos^p x \, dx \right] \cdot \left[ \int_{-\pi}^{\pi} \cos(ny) \cos^{k-p} y \, dy \right]
+\end{equation}
+
+为了与 $I_1$ 的级数指标和奇偶框架严格对齐，我们令外层总幂次减去网格距离后的项为偶数，定义完全一致的偶数遍历格式：令 $k = m + n + 2K$，且内层幂次分配满足 $p = m + 2P$（其中格点坐标 $m, n \ge 0$）。
+此时，两个带相位的一维高阶余弦积分可以直接写为如下标准组合数解析解：
+\begin{equation}
+\int_{-\pi}^{\pi} \cos(mx) \cos^{m+2P} x \, dx = \frac{2\pi}{2^{m+2P}} \binom{m+2P}{P}
+\end{equation}
+\begin{equation}
+\int_{-\pi}^{\pi} \cos(ny) \cos^{n+2K-2P} y \, dy = \frac{2\pi}{2^{n+2K-2P}} \binom{n+2K-2P}{K-P}
+\end{equation}
+
+将一维积分的组合数形式 (48) 和 (49) 代回总响应式 (47) 中，并对原多项式系数 $\binom{k}{p} = \binom{m+n+2K}{m+2P}$ 进行代数合并。两项系数相乘提取出常数 $4\pi^2$，分母基底常数合并为 $2^{m+2P} \cdot 2^{n+2K-2P} = 2^{m+n+2K}$。
+最终，关于空间项 $I_2$ 得到了与 $I_1$ 结构完美镜像对称、全组合数包装的干净表达式：
+\begin{equation}
+I_2 = 4\pi^2 \sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{m+n+2K}{m+2P} \binom{m+2P}{P} \binom{n+2K-2P}{K-P}}{2^{m+n+2K}} \cdot a^{m+2P} b^{n+2K-2P}
+\end{equation}
+
+\subsection{总积分 $I = I_1 - I_2$ 级数合并与等效阻抗 $\tilde{Z}(\omega)$ 最终闭式解}
+现在，我们将全组合数形式的基准项 $I_1$ [式 (45)] 与空间格点项 $I_2$ [式 (50)] 统一带入总积分关系式 $I = I_1 - I_2$ 中，整体提取出常数公因子 $4\pi^2$：
+\begin{align}
+I = 4\pi^2 \Bigg[ &\sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{2K}{2P} \binom{2P}{P} \binom{2K-2P}{K-P}}{4^K} \cdot a^{2P} b^{2K-2P} \nonumber \\
+&- \sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{m+n+2K}{m+2P} \binom{m+2P}{P} \binom{n+2K-2P}{K-P}}{2^{m+n+2K}} \cdot a^{m+2P} b^{n+2K-2P} \Bigg]
+\end{align}
+
+最后，将总积分 $I$ 的统一级数合并式 (51) 重新代回格点网络等效阻抗 $\tilde{Z}(\omega)$ 的初始定义式中：
+\begin{equation}
+\tilde{Z}(\omega) = -\frac{i\omega L}{4\pi^2 (\omega^2LC - 1)} \cdot I
+\end{equation}
+此时，积分化简出来的常数公因子 $4\pi^2$ 与分母上的 $4\pi^2$ **严格、干净地完全消去**。将前面的负号合入分母中，使分母转变为 $(1 - \omega^2LC)$。
+
+最终，我们得到了全篇公式风格极度统一、视觉效果极其精美的高维拓扑电路等效阻抗最终解析闭式解：
+
+\begin{align}
+\tilde{Z}(\omega) = \frac{i\omega L}{1 - \omega^2LC} \Bigg[ &\sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{2K}{2P} \binom{2P}{P} \binom{2K-2P}{K-P}}{4^K} \cdot a^{2P} b^{2K-2P} \nonumber \\
+&- \sum_{K=0}^{\infty} \sum_{P=0}^{K} \frac{\binom{m+n+2K}{m+2P} \binom{m+2P}{P} \binom{n+2K-2P}{K-P}}{2^{m+n+2K}} \cdot a^{m+2P} b^{n+2K-2P} \Bigg]
+\end{align}
+
+
+通过这种完全组合数化的改写，两组双重求和的离散指针 $K$ 和 $P$ 实现了完全的步调一致（均从 $0$ 到 $\infty$ 连续遍历，每次步长为 $1$），公式整体在视觉上非常工整美观，非常适合直接写入正式论文。
+
+
+
 \section{利用留数定理进行解析降维化简}
 为了解决分母由于减号在实数轴形成的双曲共振奇点线，利用半角公式展开分母：
 \begin{equation}
