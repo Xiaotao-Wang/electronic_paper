@@ -270,17 +270,15 @@
 
 非零贡献要求$a,b$同奇偶，且$|a|\geqslant |b|$。令$k=a+2p$（$p=0,1,2,\dots$），
 可得
-\begin{align}
+\begin{equation}
   I_2=\frac{2\pi^2}{2^{2(m+n)}}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
   \frac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}.
-\end{align}
+\end{equation}
 
 最终，等效电阻的级数公式为
 \begin{equation}
-  R_{mn}=\frac{r}{2}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
-  \Bigg[\left(\frac{(2k)!}{k!k!}\right)^2\nonumber-\frac{(m+n+2k)!^2}
-  {2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\Bigg].
-\label{eq:R_series}
+  \label{eq:R_series}
+  R_{mn}=\dfrac{r}{2}\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\left[\left(\dfrac{(2k)!}{k!k!}\right)^2-\dfrac{(m+n+2k)!^2}{2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\right]
 \end{equation}
 
 公式(\ref{eq:R_series})收敛迅速，适合数值计算。当$m=n=0$时，$R_{00}=0$；
@@ -455,6 +453,11 @@
     -1 & 0
   \end{bmatrix}
   \end{equation}
+
+
+
+
+
 
   \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵$M$变为
   \begin{equation}
