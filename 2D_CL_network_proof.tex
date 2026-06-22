@@ -1,0 +1,627 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+% 行距 1.8
+\setstretch{1.5}
+
+% section 左对齐
+\titleformat{\section}{\Large\bfseries\raggedright}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\raggedright}{\thesubsection}{1em}{}
+
+% 页眉横线 + 页脚居中页码
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\small 二维晶格格林函数 $I(m,n)$ 的严格解析}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+\titleformat{\subsubsection}{\normalsize\bfseries\raggedright}{}{0em}{}
+
+\title{二维晶格格林函数 $I(m,n)$ 的严格解析}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+研究二维无限大离散网格上的格林函数
+$I(m,n)=\iint\frac{1-\cos(mk_1)\cos(nk_2)}{\alpha\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}}dk_2dk_1$。
+通过将内层积分化为 Chebyshev 多项式的闭式，严格给出 $I(m,n)$
+在 $\alpha<1$（通带）、$\alpha=1$（临界点）、$\alpha>1$（截止带）三个频域区间的解析行为。
+核心结论：当 $\alpha<1$ 且 $m\geq n$ 时，$I(m,n)\equiv0$ 对任意 $\alpha$ 成立；
+当 $\alpha=1$ 时，仅 $m<n$ 且 $m,n$ 异奇偶时非零。
+这些结果修正了文献中关于特定 $\alpha$ 处``零点''的错误论断。
+\end{abstract}
+
+%=====================================================================
+\section{引言与问题陈述}
+%=====================================================================
+
+二维晶格格林函数（Lattice Green's Function, LGF）在凝聚态物理、阻抗网络分析、超材料设计中频繁出现。
+其核心积分形式为：
+\begin{equation}\label{eq:Imn}
+I(m,n;\alpha)=\int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
+\frac{1-\cos(mk_1)\cos(nk_2)}
+{\alpha\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}}\;dk_2dk_1
+\end{equation}
+其中 $m,n\in\mathbb{N}_0$ 为格点指标，$\alpha>0$ 为无量纲频率参数。当被积函数有实奇点时，积分理解为柯西主值（Principal Value, PV）。
+
+本文目标：对任意 $(m,n)$ 和 $\alpha$ 严格判定 $I(m,n)=0$ 的条件。
+
+%=====================================================================
+\section{积分的化简：分离内层}
+%=====================================================================
+
+利用半角公式 $\sin^2\frac{x}{2}=\frac{1-\cos x}{2}$ 展开分母：
+\begin{equation}
+\alpha\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}
+=\frac{\alpha(1-\cos k_1)-1+\cos k_2}{2}
+\end{equation}
+
+定义
+\begin{equation}\label{eq:Bdef}
+B\equiv\alpha(1-\cos k_1)-1
+\end{equation}
+分母化为 $(B+\cos k_2)/2$。原积分变为嵌套形式：
+\begin{equation}\label{eq:nested}
+\boxed{I(m,n)=2\int_{-\pi}^{\pi}\Big[J_0(B)-\cos(mk_1)J_n(B)\Big]dk_1}
+\end{equation}
+
+其中
+\begin{equation}\label{eq:Jn}
+J_n(B)=\int_{-\pi}^{\pi}\frac{\cos(n\theta)}{B+\cos\theta}\,d\theta,\qquad n=0,1,2,\dots
+\end{equation}
+是问题的核心。$B=B(k_1)$ 是 $k_1$ 的函数，内层 $J_n$ 需对给定 $B$ 求闭式，再代回外层积分。
+
+%=====================================================================
+\section{预备结果：$J_n(B)$ 的闭式}
+%=====================================================================
+
+\subsection{分类依据}
+
+$B$ 的取值范围决定了 $J_n(B)$ 的解析结构。分母的零点来自 $B+\cos\theta=0$。
+当 $|B|>1$ 时分母无实零点，为常规定积分；
+当 $|B|\leq1$ 时分母有实零点 $\theta=\pm\arccos(-B)$，需理解为主值积分。
+
+\textbf{定理 1（$J_n(B)$ 的闭式）}
+\begin{equation}\label{eq:Jn_result}
+\boxed{
+\begin{aligned}
+|B|>1\;(\text{正则区}):&\quad
+J_n(B)=\frac{\operatorname{sgn}(B)\cdot2\pi\cdot z_{\text{in}}^{\,n}}{\sqrt{B^2-1}},\qquad
+z_{\text{in}}=\begin{cases}-B+\sqrt{B^2-1},&B>1\\-B-\sqrt{B^2-1},&B<-1\end{cases}\\[8pt]
+|B|\leq1\;(\text{PV 区}):&\quad
+J_0(B)=0,\qquad J_n(B)=2\pi\,U_{n-1}(-B),\qquad n\geq1
+\end{aligned}}
+\end{equation}
+其中 $U_k(x)$ 是第二类 Chebyshev 多项式，由 $U_0=1,U_1=2x,U_{k+1}=2xU_k-U_{k-1}$ 定义。
+
+\textbf{证明概要：}$|B|>1$ 时令 $z=e^{i\theta}$ 做围道积分，计算 $z=0$ 和 $z=z_{\text{in}}$ 两处留数后合并。
+$|B|\leq1$ 时对 $B\to B+i\varepsilon$ 做推迟格林函数处理，取实部得主值。
+完整推导见附录 A。
+
+\subsection{关键性质}
+
+\begin{enumerate}
+\item $J_0(B)=0$ 对 $|B|\leq1$（主值积分在对称区间上奇函数型抵消）。
+\item $J_1(B)=2\pi$ 对 $|B|\leq1$（与 $B$ 无关的常数）。
+\item $J_n(B)$ 在 $|B|\leq1$ 时为 $-B$ 的多项式 $2\pi U_{n-1}(-B)$，是 $B$ 的光滑函数。
+\end{enumerate}
+
+%=====================================================================
+\section{主定理：$\alpha<1$ 时的恒零条件}
+%=====================================================================
+
+\subsection{$B$ 的取值区间}
+
+由 $B=\alpha(1-\cos k_1)-1$，$k_1\in[-\pi,\pi]$，$\cos k_1\in[-1,1]$，$1-\cos k_1\in[0,2]$：
+\begin{equation}
+B\in[\alpha\cdot0-1,\;\alpha\cdot2-1]=[-1,\;2\alpha-1]
+\end{equation}
+
+当 $\alpha<1$ 时，$2\alpha-1<1$。对任意 $k_1$ 恒有 $|B|\leq1$。
+全域均适用定理 1 中的 PV 公式。代入 $J_0=0,\,J_n=2\pi U_{n-1}(-B)$ 得：
+\begin{equation}\label{eq:I_alpha_lt_1}
+\boxed{I(m,n)=-4\pi\int_{-\pi}^{\pi}\cos(mk_1)\,U_{n-1}\big(1-\alpha+\alpha\cos k_1\big)\,dk_1}
+\end{equation}
+
+\subsection{多项式次数分析}
+
+$U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。将其与仿射函数 $x=1-\alpha+\alpha\cos k_1$ 复合，
+得到 $\cos k_1$ 的至多 $n-1$ 次多项式。利用二项式定理，$\cos^j k_1$ 可展开为
+$\{\cos(\ell k_1):\ell=0,1,\dots,j\}$ 的线性组合（附录 D）。
+
+\textbf{定理 2（$\alpha<1$ 时的恒零条件）}
+\begin{equation}\label{eq:thm2}
+\boxed{\alpha<1,\;m\geq n\;\Longrightarrow\;I(m,n)\equiv 0}
+\end{equation}
+
+\textbf{证明思路：}当 $m\geq n$ 时，$\cos(mk_1)$ 的频率 $m$ 严格大于乘积中出现的所有余弦频率
+（均 $\leq n-1<m$）。由标准 Fourier 正交性 $\int_{-\pi}^{\pi}\cos(p\theta)\cos(q\theta)d\theta=0\,(p\neq q)$，
+被积函数的每一项积分为零。$\alpha$ 只通过多项式系数 $c_j(\alpha)$ 进入，不改变频率结构。
+完整展开见附录 D。$\square$
+
+\textbf{推论 1} $I(m,n)=0$ 对 $\alpha<1$ 是恒零，而非在特定 $\alpha$ 处的孤立零点。
+原文献将 $\alpha\approx0.618$ 标为 $I(2,1)$ 的``黄金分割零点''是对此恒零性质的误解。
+
+\subsection{$m<n$ 时的显式结果}
+
+当 $m<n$ 时，存在 $j=m$ 使得 $\cos^j k_1$ 展开中含 $\cos(mk_1)$ 频率，正交性不成立。
+积分结果为 $\alpha$ 的多项式（次数 $n-1$）。典型例子：
+\begin{equation}\label{eq:examples}
+\begin{aligned}
+I(0,1)&=-8\pi^2 \quad\text{（常数，与 $\alpha$ 无关）}\\
+I(0,2)&=16\pi^2(\alpha-1)\\
+I(1,2)&=-8\pi^2\alpha\\
+I(1,3)&=32\pi^2\alpha(\alpha-1)
+\end{aligned}
+\end{equation}
+这些多项式的根仅在 $\alpha=0$ 或 $\alpha=1$（均为积分的边界奇点），在 $(0,1)$ 内无零点。
+
+%=====================================================================
+\section{$\alpha=1$ 的精确解}
+%=====================================================================
+
+$\alpha=1$ 时 $B=-\cos k_1$，$|B|\leq1$ 对几乎所有 $k_1$（仅在 $k_1=0,\pm\pi$ 处 $|B|=1$）。
+$-B=\cos k_1$，$U_{n-1}(\cos k_1)=\frac{\sin(nk_1)}{\sin k_1}$。代入式(\ref{eq:I_alpha_lt_1})：
+\begin{equation}
+I(m,n)=-4\pi\int_{-\pi}^{\pi}\cos(mk_1)\frac{\sin(nk_1)}{\sin k_1}dk_1
+\end{equation}
+利用 $\cos A\sin B=\frac12[\sin(B+A)+\sin(B-A)]$：
+\begin{equation}
+I(m,n)=-2\pi\!\int_{-\pi}^{\pi}\frac{\sin((n+m)k_1)+\sin((n-m)k_1)}{\sin k_1}dk_1
+\end{equation}
+
+\textbf{引理 1} $\displaystyle S_K=\int_{-\pi}^{\pi}\frac{\sin(K\theta)}{\sin\theta}d\theta=
+\begin{cases}2\pi,&K\text{ 为奇数}\\0,&K\text{ 为偶数}\end{cases}$。（证明见附录 C。）
+
+令 $p=n+m$，$q=n-m$。$p-q=2m$ 为偶数，$p,q$ 同奇偶。
+
+\textbf{定理 3（$\alpha=1$ 的精确解）}
+\begin{equation}\label{eq:thm3}
+\boxed{I(m,n)\big|_{\alpha=1}=
+\begin{cases}
+-8\pi^2\approx-78.96, & m<n\;\text{且}\;m,n\;\text{一奇一偶}\\[4pt]
+0, & \text{其他情况}
+\end{cases}}
+\end{equation}
+
+\textbf{证明：}
+\begin{itemize}
+\item $m\geq n$：$q\leq0$。$S_q=-S_{|q|}$（正弦奇函数），而 $S_p=S_{|q|}$（$p$ 与 $|q|$ 同奇偶），故 $S_p+S_q=0$。
+\item $m<n$：$q>0$。若 $m,n$ 同奇偶，$p,q$ 均偶，$S_p=S_q=0$，$I=0$。
+  若 $m,n$ 异奇偶，$p,q$ 均奇，$S_p=S_q=2\pi$，$I=-2\pi(4\pi)=-8\pi^2$。
+\end{itemize}
+$\square$
+
+%=====================================================================
+\section{$\alpha>1$ 的结论}
+%=====================================================================
+
+$\alpha>1$ 时 $B\in[-1,2\alpha-1]$，$2\alpha-1>1$。积分域分裂为：
+\begin{itemize}
+\item PV 区（$|B|\leq1$）：$|\cos k_1|\geq 1-\frac{2}{\alpha}$
+\item 正则区（$B>1$）：$|\cos k_1|<1-\frac{2}{\alpha}$
+\end{itemize}
+
+\textbf{定理 4（$\alpha>1$，$n=0$ 无零点）}
+$\forall\alpha>1,\forall m>0: I(m,0)>0$。
+
+\textbf{证明：}$J_n=J_0$。PV 区 $J_0=0$；正则区 $J_0=2\pi/\sqrt{B^2-1}>0$。
+被积函数 $2J_0(B)(1-\cos(mk_1))\geq0$ 且不恒为零（正则区非空对 $\alpha>1$）。$\square$
+
+一般 $m,n>0$ 需数值处理。计算表明 $m\geq n>0$ 通常保号无零点，
+$m<n$ 可因两区贡献干涉而产生零点。
+
+%=====================================================================
+\section{结论}
+%=====================================================================
+
+表 1 汇总了本文的主要结果。
+
+\begin{table}[htbp]
+\centering
+\caption{不同 $\alpha$ 区间下 $I(m,n)$ 的行为}
+\label{tab:summary}
+\begin{tabular}{p{2.2cm}lll}
+\toprule
+$\alpha$ 区间 & 条件 & $I(m,n)$ & 备注 \\
+\midrule
+$\alpha<1$ & $m\geq n$ & $\equiv0$ & 恒零，非孤立零点 \\
+ & $m<n$ & $\alpha$ 的多项式（次数 $n-1$）& 内部无零点 \\
+\midrule
+$\alpha=1$ & $m<n$ 且异奇偶 & $-8\pi^2$ & \\
+ & 其他 & $0$ & \\
+\midrule
+$\alpha>1$ & $n=0$ & $>0$ 恒成立 & 严格无零点 \\
+ & $m\geq n>0$ & 一般为正 & 通常无零点 \\
+ & $m<n$ & 振荡 & 可有多零点 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+原文献中关于 $I(1,1)$ 对所有 $\alpha$ 恒为零、$I(2,1)$ 在黄金分割处有零点等结论
+在 $\alpha>1$ 时不成立。其围道积分推导遗漏了 $z=0$ 处的留数，
+且未正确处理 $|B|=1$ 处的 PV/正则区过渡。
+
+%=====================================================================
+\appendix
+%=====================================================================
+
+\section{附录 A：$J_n(B)$ 的完整推导}
+\label{app:Jn}
+
+\subsection*{A.1 从实积分到围道积分}
+
+我们要计算
+\begin{equation}
+J_n(B)=\int_{-\pi}^{\pi}\frac{\cos(n\theta)}{B+\cos\theta}\,d\theta
+\end{equation}
+其中 $B$ 是实参数，$n$ 是非负整数。当 $|B|\leq1$ 时分母有实零点，积分理解为主值。
+
+被积函数是 $\cos\theta$ 的有理函数。处理这类积分的标准方法是利用 Euler 公式
+$\cos\theta=\frac{e^{i\theta}+e^{-i\theta}}{2}$，
+作变量代换 $z=e^{i\theta}$。当 $\theta$ 从 $-\pi$ 变到 $\pi$ 时，$z$ 沿复平面上的单位圆周 $C$（$|z|=1$）逆时针绕行一周。在此代换下：
+\begin{equation}
+\cos\theta=\frac{z+z^{-1}}{2},\qquad
+\cos(n\theta)=\frac{z^n+z^{-n}}{2},\qquad
+d\theta=\frac{dz}{iz}
+\end{equation}
+其中 $d\theta=dz/(iz)$ 来自 $z=e^{i\theta}\Rightarrow dz=ie^{i\theta}d\theta=iz\,d\theta$。
+
+将以上三式代入 $J_n(B)$：
+\begin{equation}
+\begin{aligned}
+J_n(B)&=\oint_C\frac{\frac{z^n+z^{-n}}{2}}{B+\frac{z+z^{-1}}{2}}\cdot\frac{dz}{iz}
+      =\oint_C\frac{z^n+z^{-n}}{2}\cdot\frac{2}{2B+z+z^{-1}}\cdot\frac{dz}{iz}
+\end{aligned}
+\end{equation}
+分母 $2B+z+z^{-1}$ 同乘 $z$ 化为 $(z^2+2Bz+1)/z$，其倒数为 $z/(z^2+2Bz+1)$。代入：
+\begin{equation}
+\begin{aligned}
+J_n(B)&=\oint_C(z^n+z^{-n})\cdot\frac{z}{z^2+2Bz+1}\cdot\frac{dz}{iz} \\[4pt]
+&=\frac{1}{i}\oint_C\frac{z^n+z^{-n}}{z^2+2Bz+1}\,dz
+\end{aligned}
+\end{equation}
+约去了分子和 $dz/(iz)$ 中的 $z$。
+
+\textbf{极点分析。}被积函数分裂为两项：
+\begin{equation}
+\frac{z^n}{z^2+2Bz+1}+\frac{z^{-n}}{z^2+2Bz+1}
+\end{equation}
+第一项 $\frac{z^n}{z^2+2Bz+1}$ 在 $z=0$ 处解析（$n\geq0$ 时分子 $z^n$ 消去可能的极点）。
+第二项 $\frac{z^{-n}}{z^2+2Bz+1}=\frac{1}{z^n(z^2+2Bz+1)}$ 在 $z=0$ 处有 $n$ 阶极点（$n\geq1$ 时）。
+
+分母 $z^2+2Bz+1$ 的零点由求根公式给出：
+\begin{equation}
+z_{\pm}=-B\pm\sqrt{B^2-1}
+\end{equation}
+两根的乘积 $z_+\cdot z_-=1$（韦达定理，常数项与二次项系数之比）。
+
+极点是否落在积分围道内，取决于 $B$ 的取值。分两种情况讨论。
+
+\subsection*{A.2 情况一：$|B|>1$}
+
+此时 $B^2-1>0$，$\sqrt{B^2-1}$ 为实数，$z_{\pm}$ 均为实数。由 $z_+\cdot z_-=1$ 知一根在单位圆内、一根在圆外：
+\begin{itemize}
+\item 当 $B>1$：$z_+=-B+\sqrt{B^2-1}$。因 $B>1$ 有 $0<\sqrt{B^2-1}<B$，故 $z_+\in(-1,0)$，$|z_+|<1$（圆内）；$z_-=-B-\sqrt{B^2-1}<-1$（圆外）。
+\item 当 $B<-1$：令 $B'=-B>1$，则 $z_{\pm}=B'\pm\sqrt{B'^{\,2}-1}$。$z_-=B'-\sqrt{B'^{\,2}-1}\in(0,1)$（圆内）；$z_+>1$（圆外）。
+\end{itemize}
+此外 $z=0$ 始终在圆内。下面以 $B>1$ 为例详述，$B<-1$ 完全类似。
+
+\medskip
+\noindent\textbf{留数 at $z=0$（$n\geq1$）。}
+令 $g(z)=\frac{1}{z^2+2Bz+1}$。$g(z)$ 在 $z=0$ 解析，做 Taylor 展开 $g(z)=\sum_{k=0}^{\infty}a_k z^k$。
+系数由 $(z^2+2Bz+1)g(z)=1$ 逐次比对确定。乘开左边：
+\begin{equation}
+(1+2Bz+z^2)(a_0+a_1z+a_2z^2+\cdots)=1
+\end{equation}
+常数项给出 $a_0=1$。$z^1$ 项给出 $a_1+2Ba_0=0$，故 $a_1=-2B$。
+$z^{k+2}$ 项（$k\geq0$）给出 $a_{k+2}+2B a_{k+1}+a_k=0$，即：
+\begin{equation}\label{eq:recur_app}
+a_0=1,\quad a_1=-2B,\quad a_{k+2}=-2B a_{k+1}-a_k\;\;(k\geq0)
+\end{equation}
+
+此递推与第二类 Chebyshev 多项式 $U_k(x)$ 的递推
+$U_0(x)=1,\;U_1(x)=2x,\;U_{k+2}(x)=2xU_{k+1}(x)-U_k(x)$
+有直接对应。设 $a_k=(-1)^kU_k(B)$：
+$a_0=(-1)^0U_0(B)=1$；$a_1=(-1)^1U_1(B)=-2B$；
+\begin{equation}
+\begin{aligned}
+a_{k+2}&=(-1)^{k+2}U_{k+2}(B)
+       =(-1)^{k+2}\big[2B\,U_{k+1}(B)-U_k(B)\big] \\[2pt]
+       &=-2B\cdot(-1)^{k+1}U_{k+1}(B)-(-1)^kU_k(B) \\[2pt]
+       &=-2B a_{k+1}-a_k
+\end{aligned}
+\end{equation}
+与 \eqref{eq:recur_app} 一致。故 $a_k=(-1)^kU_k(B)$ 对所有 $k\geq0$ 成立。
+
+现在 $f(z)=z^{-n}g(z)=\sum_{k=0}^{\infty}a_k z^{k-n}$。留数是 Laurent 展开中 $z^{-1}$ 的系数，
+即 $k-n=-1\Rightarrow k=n-1$ 项。因此：
+\begin{equation}\label{eq:res0_app}
+\operatorname{Res}\!\left(\frac{z^{-n}}{z^2+2Bz+1},\,z=0\right)=a_{n-1}=(-1)^{n-1}U_{n-1}(B)
+\end{equation}
+
+\medskip
+\noindent\textbf{留数 at $z=z_+$。}
+分母分解为 $z^2+2Bz+1=(z-z_+)(z-z_-)$。对一阶极点 $z_+$：
+\begin{equation}
+\operatorname{Res}\!\left(\frac{z^n+z^{-n}}{(z-z_+)(z-z_-)},\,z=z_+\right)
+=\frac{z_+^{\,n}+z_+^{-n}}{z_+-z_-}
+=\frac{z_+^{\,n}+z_+^{-n}}{2\sqrt{B^2-1}}
+\end{equation}
+
+\medskip
+\noindent\textbf{留数定理给出 $J_n(B)$。}
+由留数定理 $\frac{1}{i}\oint_C f(z)dz=2\pi\sum_{\text{圆内}}\operatorname{Res}$，对 $B>1$ 圆内极点为 $z=0$ 和 $z=z_+$：
+\begin{equation}\label{eq:Jn_before_simplify}
+J_n(B)=2\pi\Big[(-1)^{n-1}U_{n-1}(B)+\frac{z_+^{\,n}+z_+^{-n}}{2\sqrt{B^2-1}}\Big]
+\end{equation}
+
+\medskip
+\noindent\textbf{化简。}
+要证明方括号内的表达式等于 $z_+^{\,n}/\sqrt{B^2-1}$。因 $B>1$，引入参数化 $B=\cosh t$（$t>0$），这是合法的因为 $\cosh:(0,\infty)\to(1,\infty)$ 是一一对应。在此参数化下：
+\begin{equation}
+\sqrt{B^2-1}=\sqrt{\cosh^2 t-1}=\sinh t
+\end{equation}
+\begin{equation}
+z_+=-B+\sqrt{B^2-1}=-\cosh t+\sinh t
+     =-\frac{e^t+e^{-t}}{2}+\frac{e^t-e^{-t}}{2}
+     =\frac{-e^t-e^{-t}+e^t-e^{-t}}{2}=-e^{-t}
+\end{equation}
+
+将 \eqref{eq:Jn_before_simplify} 中每一项用 $t$ 表示。第一项需要 $U_{n-1}(\cosh t)$ 的值。
+利用恒等式 $U_k(\cosh t)=\frac{\sinh((k+1)t)}{\sinh t}$（见附录 B），令 $k=n-1$：
+\begin{equation}
+U_{n-1}(\cosh t)=\frac{\sinh(nt)}{\sinh t}
+\quad\Longrightarrow\quad
+(-1)^{n-1}U_{n-1}(B)=(-1)^{n-1}\frac{\sinh(nt)}{\sinh t}
+\end{equation}
+
+第二项中：
+\begin{equation}
+\frac{z_+^{\,n}}{2\sqrt{B^2-1}}=\frac{(-e^{-t})^n}{2\sinh t}=\frac{(-1)^n e^{-nt}}{2\sinh t},\qquad
+\frac{z_+^{-n}}{2\sqrt{B^2-1}}=\frac{(-e^{-t})^{-n}}{2\sinh t}=\frac{(-1)^n e^{nt}}{2\sinh t}
+\end{equation}
+（因 $(-1)^{-n}=((-1)^{-1})^n=(-1)^n$。）两项之和：
+\begin{equation}
+\frac{z_+^{\,n}+z_+^{-n}}{2\sqrt{B^2-1}}
+=(-1)^n\frac{e^{-nt}+e^{nt}}{2\sinh t}
+=(-1)^n\frac{\cosh(nt)}{\sinh t}
+\end{equation}
+
+现在将第一项和第二项相加：
+\begin{equation}
+\begin{aligned}
+&\;(-1)^{n-1}\frac{\sinh(nt)}{\sinh t}+(-1)^n\frac{\cosh(nt)}{\sinh t} \\[4pt]
+=&\;\frac{1}{\sinh t}\Big[(-1)^{n-1}\sinh(nt)+(-1)^n\cosh(nt)\Big] \\[4pt]
+=&\;\frac{(-1)^{n-1}}{\sinh t}\Big[\sinh(nt)-\cosh(nt)\Big]
+\qquad(\because\;(-1)^n=-(-1)^{n-1})
+\end{aligned}
+\end{equation}
+
+计算 $\sinh(nt)-\cosh(nt)=\frac{e^{nt}-e^{-nt}}{2}-\frac{e^{nt}+e^{-nt}}{2}=-e^{-nt}$。代入：
+\begin{equation}
+\begin{aligned}
+\text{方括号内}&=\frac{(-1)^{n-1}}{\sinh t}\cdot(-e^{-nt})
+                =\frac{(-1)^{n-1}\cdot(-1)\cdot e^{-nt}}{\sinh t}
+                =\frac{(-1)^n e^{-nt}}{\sinh t}
+\end{aligned}
+\end{equation}
+
+这正是 $\frac{z_+^{\,n}}{\sqrt{B^2-1}}=\frac{(-1)^n e^{-nt}}{\sinh t}$。因此：
+\begin{equation}
+J_n(B)=2\pi\cdot\frac{z_+^{\,n}}{\sqrt{B^2-1}}=\frac{2\pi\,z_+^{\,n}}{\sqrt{B^2-1}}\qquad(B>1)
+\end{equation}
+
+对 $B<-1$，圆内极点为 $z=0$ 和 $z=z_-$，令 $B=-\cosh t$ 做完全类似的计算，得到
+$J_n(B)=-\frac{2\pi\,z_-^{\,n}}{\sqrt{B^2-1}}$。
+
+\medskip
+\noindent\textbf{统一表达式。}
+引入记号 $z_{\text{in}}$ 表示圆内的那个根，$\sigma=\operatorname{sgn}(B)$：
+\begin{equation}
+\boxed{J_n(B)=\frac{\sigma\cdot2\pi\cdot z_{\text{in}}^{\,n}}{\sqrt{B^2-1}},\qquad
+z_{\text{in}}=\begin{cases}
+-B+\sqrt{B^2-1},&B>1\\
+-B-\sqrt{B^2-1},&B<-1
+\end{cases},\qquad|z_{\text{in}}|<1}
+\end{equation}
+$n=0$ 时 $z^0=1$，公式给出 $J_0(B)=\sigma\cdot2\pi/\sqrt{B^2-1}$，与直接计算一致。
+
+\subsection*{A.3 情况二：$|B|\leq1$（主值）}
+
+当 $|B|\leq1$ 时，$z_{\pm}=-B\pm i\sqrt{1-B^2}$ 满足 $|z_{\pm}|=1$，两根均在单位圆周上。此时分母
+$B+\cos\theta$ 在积分区间内有实零点 $\theta=\pm\arccos(-B)$，积分需理解为主值。
+
+处理主值的标准方法是引入无穷小虚部 $B\to B+i\varepsilon$（$\varepsilon\to0^+$），
+计算推迟格林函数后取实部（Sokhotski--Plemelj 定理）。
+
+令 $\cos\theta_0=-B$，$\sin\theta_0=\sqrt{1-B^2}$，则 $\theta_0=\arccos(-B)\in[0,\pi]$。
+现在 $B=-\cos\theta_0$。计算 $\sqrt{(B+i\varepsilon)^2-1}$ 当 $\varepsilon\to0^+$ 时的行为：
+\begin{equation}
+\begin{aligned}
+\sqrt{(B+i\varepsilon)^2-1}
+&=\sqrt{B^2-1+2iB\varepsilon} \quad(\text{略去 }\varepsilon^2)\\[4pt]
+&=\sqrt{-\sin^2\theta_0+2iB\varepsilon}
+ =i\sin\theta_0\sqrt{1-\frac{2iB\varepsilon}{\sin^2\theta_0}} \\[4pt]
+&\approx i\sin\theta_0\left(1-\frac{iB\varepsilon}{\sin^2\theta_0}\right)
+ =i\sin\theta_0+\frac{B\varepsilon}{\sin\theta_0}
+\end{aligned}
+\end{equation}
+（第二步用了 $B=-\cos\theta_0\Rightarrow B^2-1=\cos^2\theta_0-1=-\sin^2\theta_0$；最后一步是 Taylor 展开 $\sqrt{1+x}\approx1+x/2$。）
+
+代入 $z_{\pm}=-(B+i\varepsilon)\pm\sqrt{(B+i\varepsilon)^2-1}$：
+\begin{equation}
+\begin{aligned}
+z_{\pm}&=-B-i\varepsilon\pm\left(i\sin\theta_0+\frac{B\varepsilon}{\sin\theta_0}\right) \\[4pt]
+&=\cos\theta_0\pm i\sin\theta_0
+   +\varepsilon\left(\mp\frac{\cos\theta_0}{\sin\theta_0}-i\right) \\[4pt]
+&=e^{\pm i\theta_0}\mp\varepsilon\frac{e^{\pm i\theta_0}}{\sin\theta_0}
+ =e^{\pm i\theta_0}\left(1\mp\frac{\varepsilon}{\sin\theta_0}\right)
+\end{aligned}
+\end{equation}
+
+当 $\varepsilon\to0^+$：$|z_+|=1-\varepsilon/\sin\theta_0<1$（移到圆内），$|z_-|=1+\varepsilon/\sin\theta_0>1$（移到圆外）。
+因此在推迟格林函数意义下，圆内极点为 $z=0$（$n\geq1$）和 $z=z_+$。
+
+$z=0$ 处的留数仍为 $(-1)^{n-1}U_{n-1}(B)$（系数 $a_k$ 的推导仅依赖 $g(z)$ 在 $z=0$ 的形式幂级数，
+与 $|B|$ 的大小无关，$U_{n-1}(B)$ 是 $B$ 的多项式对任意 $B$ 有定义）。
+
+$z_+$ 处留数（取 $\varepsilon\to0^+$ 极限）：
+\begin{equation}
+\operatorname{Res}(z_+)=\frac{z_+^{\,n}+z_+^{-n}}{z_+-z_-}
+\to\frac{e^{in\theta_0}+e^{-in\theta_0}}{e^{i\theta_0}-e^{-i\theta_0}}
+=\frac{2\cos(n\theta_0)}{2i\sin\theta_0}
+=-i\frac{\cos(n\theta_0)}{\sin\theta_0}
+\end{equation}
+
+留数之和：$\operatorname{Res}_{\text{tot}}=(-1)^{n-1}U_{n-1}(B)-i\frac{\cos(n\theta_0)}{\sin\theta_0}$。
+
+推迟格林函数 $J_n^{\text{ret}}(B)=\frac{1}{i}\cdot2\pi i\cdot\operatorname{Res}_{\text{tot}}
+=2\pi\big[(-1)^{n-1}U_{n-1}(B)-i\frac{\cos(n\theta_0)}{\sin\theta_0}\big]$。
+
+取实部得主值：
+\begin{equation}
+J_n^{\text{PV}}(B)=\operatorname{Re}\!\big(J_n^{\text{ret}}(B)\big)=2\pi(-1)^{n-1}U_{n-1}(B)
+\end{equation}
+
+利用 Chebyshev $U$ 多项式的奇偶性 $U_k(-x)=(-1)^kU_k(x)$：
+\begin{equation}
+(-1)^{n-1}U_{n-1}(B)=U_{n-1}(-B)
+\end{equation}
+
+同时 $n=0$ 时仅有 $z_+$ 留数 $2/(2i\sin\theta_0)=-i/\sin\theta_0$，$J_0^{\text{ret}}$ 为纯虚数，实部为零。
+综上：
+\begin{equation}
+\boxed{J_0(B)=0,\qquad J_n(B)=2\pi\,U_{n-1}(-B)\qquad(|B|\leq1,\;n\geq1)}
+\end{equation}
+其中 $U_{n-1}$ 是第二类 Chebyshev 多项式，$-B=1-\alpha+\alpha\cos k_1$（由 $B$ 的定义 $B=\alpha(1-\cos k_1)-1$ 解出）。
+
+\section{附录 B：$U_k(\cosh t)=\sinh((k+1)t)/\sinh t$ 的证明}
+\label{app:Ucosh}
+
+此恒等式在附录 A 化简 $J_n(B)$ 时使用。用数学归纳法证明。
+
+$k=0$：$U_0(\cosh t)=1$，而 $\sinh(t)/\sinh t=1$。成立。
+
+$k=1$：$U_1(\cosh t)=2\cosh t$，而 $\sinh(2t)/\sinh t=2\sinh t\cosh t/\sinh t=2\cosh t$。成立。
+
+归纳步：设对 $k-1$ 和 $k$ 成立（$k\geq1$）。由 Chebyshev $U$ 递推 $U_{k+1}(x)=2xU_k(x)-U_{k-1}(x)$：
+\begin{equation}
+\begin{aligned}
+U_{k+1}(\cosh t)
+&=2\cosh t\cdot U_k(\cosh t)-U_{k-1}(\cosh t) \\[4pt]
+&=2\cosh t\frac{\sinh((k+1)t)}{\sinh t}-\frac{\sinh(kt)}{\sinh t} \\[4pt]
+&=\frac{2\cosh t\sinh((k+1)t)-\sinh(kt)}{\sinh t}
+\end{aligned}
+\end{equation}
+利用双曲函数的积化和差 $2\cosh a\sinh b=\sinh(a+b)+\sinh(b-a)$：
+\begin{equation}
+2\cosh t\sinh((k+1)t)=\sinh((k+2)t)+\sinh(kt)
+\end{equation}
+代回分子：
+\begin{equation}
+\frac{\sinh((k+2)t)+\sinh(kt)-\sinh(kt)}{\sinh t}
+=\frac{\sinh((k+2)t)}{\sinh t}
+\end{equation}
+即 $U_{k+1}(\cosh t)=\sinh((k+2)t)/\sinh t$。归纳完成。$\square$
+
+\section{附录 C：$S_K=\int_{-\pi}^{\pi}\frac{\sin(K\theta)}{\sin\theta}d\theta$ 的计算}
+\label{app:SK}
+
+此积分在 $\alpha=1$ 的精确解中使用。计算分奇偶两种情况。
+
+首先利用 Chebyshev $U$ 多项式的三角定义 $U_{K-1}(\cos\theta)=\frac{\sin(K\theta)}{\sin\theta}$，故
+$S_K=\int_{-\pi}^{\pi}U_{K-1}(\cos\theta)d\theta$。但更直接的算法是三角恒等式。
+
+\textbf{$K$ 为奇数：} 令 $K=2M+1$（$M\geq0$）。由积化和差可归纳证明：
+\begin{equation}
+\frac{\sin((2M+1)\theta)}{\sin\theta}=1+2\sum_{j=1}^{M}\cos(2j\theta)
+\end{equation}
+每一项 $\cos(2j\theta)$（$j\geq1$）在 $[-\pi,\pi]$ 上积分 $\int_{-\pi}^{\pi}\cos(2j\theta)d\theta=0$。
+仅常数 $1$ 贡献 $2\pi$。故 $S_{2M+1}=2\pi$。
+
+\textbf{$K$ 为偶数：} 令 $K=2M$（$M\geq1$）。同理：
+\begin{equation}
+\frac{\sin(2M\theta)}{\sin\theta}=2\sum_{j=1}^{M}\cos((2j-1)\theta)
+\end{equation}
+每一项频率均为奇数（$\neq0$），积分均为零。故 $S_{2M}=0$。$\square$
+
+\section{附录 D：Fourier 展开与正交性的完整推导}
+\label{app:fourier}
+
+本附录给出正文定理~2 所用正交性论证的逐项计算。
+
+\subsection*{D.1 $\cos^j\theta$ 展开为余弦的线性组合}
+
+由 Euler 公式 $\cos\theta=\frac{e^{i\theta}+e^{-i\theta}}{2}$ 及二项式定理：
+\begin{equation}
+\begin{aligned}
+\cos^j\theta
+&=\left(\frac{e^{i\theta}+e^{-i\theta}}{2}\right)^j
+ =\frac{1}{2^j}\sum_{p=0}^{j}\binom{j}{p}(e^{i\theta})^{j-p}(e^{-i\theta})^p \\[4pt]
+&=\frac{1}{2^j}\sum_{p=0}^{j}\binom{j}{p}e^{i(j-2p)\theta}
+ =\frac{1}{2^j}\sum_{p=0}^{j}\binom{j}{p}\cos((j-2p)\theta)
+\end{aligned}
+\end{equation}
+最后一步利用了 $p$ 和 $j-p$ 两项的虚部对消。展开式中出现的余弦频率为 $|j-2p|$（$p=0,\dots,j$），均 $\leq j$。
+
+\subsection*{D.2 $U_{n-1}(-B)$ 展开为 $\cos k_1$ 的多项式}
+
+由 $B=\alpha(1-\cos k_1)-1$ 得 $-B=1-\alpha+\alpha\cos k_1$，是 $\cos k_1$ 的一次函数。
+$U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。复合后得到 $\cos k_1$ 的至多 $n-1$ 次多项式：
+\begin{equation}\label{eq:U_expand_app}
+U_{n-1}(1-\alpha+\alpha\cos k_1)=\sum_{j=0}^{n-1}c_j(\alpha)\cos^j k_1
+\end{equation}
+系数 $c_j(\alpha)$ 由 $U_{n-1}$ 的多项式系数和 $\alpha$ 决定，具体形式不影响后续正交性结论（仅次数上界 $n-1$ 重要）。
+
+\subsection*{D.3 代入 $I(m,n)$ 并逐项积分}
+
+将式(\ref{eq:U_expand_app})代入 $\alpha<1$ 时 $I(m,n)$ 的表达式(\ref{eq:I_alpha_lt_1})：
+\begin{equation}
+\begin{aligned}
+I(m,n)&=-4\pi\int_{-\pi}^{\pi}\cos(mk_1)\sum_{j=0}^{n-1}c_j(\alpha)\cos^j k_1\,dk_1 \\[4pt]
+&=-4\pi\sum_{j=0}^{n-1}c_j(\alpha)\int_{-\pi}^{\pi}\cos(mk_1)\cos^j k_1\,dk_1
+\end{aligned}
+\end{equation}
+
+将 D.1 中 $\cos^j k_1$ 的展开代入：
+\begin{equation}
+I(m,n)=-4\pi\sum_{j=0}^{n-1}\frac{c_j(\alpha)}{2^j}\sum_{p=0}^{j}\binom{j}{p}
+\int_{-\pi}^{\pi}\cos(mk_1)\,\cos((j-2p)k_1)\,dk_1
+\end{equation}
+
+用积化和差 $\cos A\cos B=\frac12[\cos(A+B)+\cos(A-B)]$ 展开乘积：
+\begin{equation}
+\cos(mk_1)\cos((j-2p)k_1)
+=\frac12\Big[\cos((m+j-2p)k_1)+\cos((m-j+2p)k_1)\Big]
+\end{equation}
+
+积分 $\int_{-\pi}^{\pi}\cos(Kk_1)dk_1$ 当 $K=0$ 时为 $2\pi$，$K\neq0$ 时 $\sin(Kk_1)/K|_{\pm\pi}=0$。
+
+\textbf{当 $m\geq n$ 时，} 对所有 $j\leq n-1$ 和 $p\in[0,j]$：
+\begin{itemize}
+\item 频率 $K_1=m+j-2p$。因 $j-2p\in[-j,j]$，$K_1\geq m-j\geq m-(n-1)$。由 $m\geq n$ 得 $m-(n-1)\geq1$，故 $K_1>0$。
+\item 频率 $K_2=m-j+2p$。最小值在 $p=0$ 时 $K_2=m-j\geq m-(n-1)\geq1>0$。
+\end{itemize}
+两项频率均严格非零，每一项积分为零。求和后 $I(m,n)=0$。
+
+\textbf{$\alpha$ 不参与频率的判定。}它仅通过系数 $c_j(\alpha)$ 影响各项权重，但不改变 $(j,p)$ 对应的频率值。正交性对每个 $(j,p)$ 独立成立。$\square$
+
+\begin{thebibliography}{9}
+\bibitem{GR}
+I.S. Gradshteyn and I.M. Ryzhik, \textit{Table of Integrals, Series, and Products}, 7th ed., Academic Press, 2007.
+\bibitem{NIST}
+F.W.J. Olver et al., \textit{NIST Handbook of Mathematical Functions}, Cambridge University Press, 2010.
+\end{thebibliography}
+
+\end{document}
