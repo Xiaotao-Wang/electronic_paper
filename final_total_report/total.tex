@@ -385,6 +385,7 @@
 晶胞编号：$1\leqslant i \leqslant N$，节点编号：$A,B$。考虑第$n$和$n+1$个晶胞中的节点，其电压分别为$V_{A}^n$和$V_{B}^n$。
 根据KCL，得到以下方程组：
 \begin{equation}
+  \label{eq27}
   \begin{dcases}
     \ii\omega C_1\left(V_{A}^n - V_{B}^n\right) + \ii\omega C_2\left(V_{A}^n - V_{B}^{n-1}\right)+ \frac{V_{A}^n-0}{\ii\omega L} = 0,\\
     \ii\omega C_1\left(V_{B}^{n-1} - V_{A}^{n-1}\right) + \ii\omega C_2\left(V_{B}^{n-1} - V_{A}^{n}\right)+ \frac{V_{B}^{n-1}-0}{\ii\omega L} = 0. 
@@ -410,9 +411,35 @@
 
   \end{bmatrix}V[n-1]
 \end{equation}
-其中$n=1,2,\dots,N-1$。
+其中$n=1,2,\dots,N-1$，传输矩阵记为$M$。
+
+\subsection{发生谐振的情况}
+\begin{enumerate}
+  \item 当$\omega=\dfrac{1}{\sqrt{L(C_1+C_2)}}$时，传输矩阵$M$变为
+  \begin{equation}
+    M=\begin{bmatrix}
+    -\frac{C_1}{C_2} & 0\\
+    0& - \frac{C_2}{C_1}
+  \end{bmatrix}
+  \end{equation}
+
+  对于$A$而言，
+  \begin{equation}
+    V_A^N = \left(-\frac{C_1}{C_2}\right)^N V_A^0.
+  \end{equation}
+
+  对于$n=N$，由于阵列有限长，末端电压需要用额外方程确定方程(\ref{eq27})改写为
+  \begin{equation}
+    \begin{dcases}
+      \ii\omega C_1\left(V_{A}^N - V_{B}^N\right) + \ii\omega C_2\left(V_{A}^N - V_{B}^{N-1}\right)+ \frac{V_{A}^N-0}{\ii\omega L} = 0,\\
+      \ii\omega C_1\left(V_{B}^N - V_{A}^N\right) + \frac{V_{B}^N-0}{\ii\omega L} = 0. 
+    \end{dcases}
+  \end{equation}
 
 
+
+
+\end{enumerate}
 
 
 
