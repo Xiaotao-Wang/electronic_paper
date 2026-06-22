@@ -18,3 +18,8 @@ __pycache__
 2D_CL_network.log
 2D_CL_network.out
 2D_CL_network.synctex.gz
+
+total.log
+total.aux
+total.out
+total.synctex.gz

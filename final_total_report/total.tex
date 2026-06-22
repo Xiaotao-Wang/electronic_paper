@@ -298,9 +298,86 @@
   \label{fig:zzl}
 \end{figure}
 
+\section{一维二聚化$LC$传输线}
+\begin{figure}[H]
+    \centering
+    \begin{circuitikz}[
+        scale=1.0,
+        every capacitor/.style={thick, capacitors/scale=0.7},
+        box/.style={draw, minimum width=0.7cm, minimum height=0.7cm, thick, font=\bfseries},
+    ]
+        % 地线
 
+        
+        \def\y{-2.2}
+        \def\gap{3.2}      % 晶胞内间距（A到B）
+        \def\couple{2.8}   % 晶胞间间距（B到下一个A）
+        
+        % ========== 晶胞0 ==========
+        % A0 (节点0)
+        \node[box] (N0) at (2,\y) {0};
+        % 对地电容 L：从box底部连接到地线
+        \draw (N0.south) to[L, l=$L$, *-*] (2,-4);
+        \node[blue, font=\small, anchor=south east] at (N0.north west) {$A_0$};
+        \node[red, font=\scriptsize, anchor=north] at (N0.south) {输入};
+        
+        % B0 (节点1)
+        \node[box] (N1) at (2+\gap,\y) {1};
+        \draw (N1.south) to[L, l=$L$, *-*] (2+\gap,-4);
+        \node[blue, font=\small, anchor=south west] at (N1.north east) {$B_0$};
+        
+        % 晶胞内耦合电容 C1
+        \draw (N0.east) to[C, l=$C_1$, *-*] (N1.west);
+        
+        % ========== 晶胞间耦合 ==========
+        \pgfmathsetmacro{\xA}{2+\gap+\couple}
+        % 晶胞间耦合电容 C2
+        \node[box] (N2) at (\xA,\y) {2};
+        \draw (N1.east) to[C, l=$C_2$, *-*] (N2.west);
+        
+        % ========== 晶胞1 ==========
+        % A1 (节点2)
+        
+        \draw (N2.south) to[L, l=$L$, *-*] (\xA,-4);
+        \node[blue, font=\small, anchor=south east] at (N2.north west) {$A_1$};
+        
+        % B1 (节点3)
+        \node[box] (N3) at (\xA+\gap,\y) {3};
+        \draw (N3.south) to[L, l=$L$, *-*] (\xA+\gap,-4);
+        \node[blue, font=\small, anchor=south west] at (N3.north east) {$B_1$};
+        
+        % 晶胞内耦合电容 C1
+        \draw (N2.east) to[C, l=$C_1$, *-*] (N3.west);
+        
+        % ========== 末端节点4 ==========
+        \pgfmathsetmacro{\xB}{\xA+\gap+\couple}
+        % 晶胞间耦合电容 C2
+        \node[box] (N4) at (\xB,\y) {4};
+        \draw (N3.east) to[C, l=$C_2$, *-*] (N4.west);
+        
+        \draw (N4.south) to[L, l=$L$, *-*] (\xB,-4);
+        
+        % 晶胞分组标注
+        \draw[decorate, decoration={brace, amplitude=4pt}] 
+            ($(N0.north west)+(-0.1,0.3)$) -- ($(N1.north east)+(0.1,0.3)$)
+            node[midway, above, font=\small] {晶胞0};
+        \draw[decorate, decoration={brace, amplitude=4pt}] 
+            ($(N2.north west)+(-0.1,0.3)$) -- ($(N3.north east)+(0.1,0.3)$)
+            node[midway, above, font=\small] {晶胞1};
 
+        \pgfmathsetmacro{\xC}{\xB+\couple}
+        \node[box] (NN) at (\xC,\y) {$2N$};
+        \draw[dashed] (N4.east) -- (NN.west);
+        \node[red, font=\scriptsize, anchor=north] at (NN.south) {末端};
+        \draw (NN.south) to[L, l=$L$, *-*] (\xC,-4);
 
+        \draw[thick, color=black!60] (1,-4) -- (\xC,-4);
+        \draw (1,-4) node[ground]{};
+
+    \end{circuitikz}
+    \caption{耦合电容阵列电路图}
+    \label{fig:4}
+\end{figure}
 
 
 
@@ -481,6 +558,12 @@ $U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。复合 $x=1-\alpha+\alpha\cos k_1$
     \label{eq:theorem_alpha_greater_1_n0}
 \end{equation}
 对于一般 $m,n > 0$，阻抗行为更为复杂，$m\ge n$ 时通常保号无零点，$m<n$ 时可能因两区贡献干涉而产生零点。这些细节可通过数值计算进一步研究。
+
+
+
+
+
+
 
 \section{数值实验与讨论}
 
