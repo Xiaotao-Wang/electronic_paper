@@ -423,7 +423,7 @@
 
   对于$A$而言，
   \begin{equation}
-    V_A^N = \left(-\frac{C_1}{C_2}\right)^N V_A^0.
+    V_A^n = \left(-\frac{C_1}{C_2}\right)^n V_A^0.
   \end{equation}
 
   对于$n=N$，由于阵列有限长，末端电压需要用额外方程确定方程(\ref{eq27})改写为
@@ -433,6 +433,14 @@
       \ii\omega C_1\left(V_{B}^N - V_{A}^N\right) + \frac{V_{B}^N-0}{\ii\omega L} = 0. 
     \end{dcases}
   \end{equation}
+
+于是解出
+\begin{equation}
+  V_B^N = \dfrac{\omega^2C_1L}{\omega^2C_1L-1}V_A^N=\dfrac{\omega^2C_1L}{\omega^2C_1L-1}\left(-\frac{C_1}{C_2}\right)^N V_A^0=\left(-\frac{C_1}{C_2}\right)^{N+1} V_A^0
+\end{equation}
+\begin{equation}
+  V_B^n=\left(-\dfrac{C_1}{C_2}\right)^{N-n}V_B^N=\dfrac{\omega^2C_1L}{\omega^2C_1L-1}\left(-\frac{C_1}{C_2}\right)^{2N-n}V_A^0=\left(-\frac{C_1}{C_2}\right)^{2N-n+1}V_A^0
+\end{equation}
 
 
 
