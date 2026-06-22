@@ -4,3 +4,17 @@
 2D_resistor_network.aux
 .vscode
 .agents
+.idea
+__pycache__
+*2D_resistor_network.
+2D_CL_network_proof.aux
+2D_CL_network_proof.out
+2D_CL_network_proof.synctex
+2D_CL_network_proof.log
+2D_CL_network_proof.aux
+2D_CL_network_proof.synctex.gz
+
+2D_CL_network.aux
+2D_CL_network.log
+2D_CL_network.out
+2D_CL_network.synctex.gz
