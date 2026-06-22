@@ -272,7 +272,7 @@
 可得
 \begin{equation}
   I_2=\frac{2\pi^2}{2^{2(m+n)}}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
-  \frac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}.
+  \frac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}
 \end{equation}
 
 最终，等效电阻的级数公式为
@@ -382,6 +382,7 @@
 \subsection{各点电压值理论推导}
 晶胞编号：$1\leqslant i \leqslant N$，节点编号：$A,B$。考虑第$n$和$n+1$个晶胞中的节点，其电压分别为$V_{A}^n$和$V_{B}^n$。
 根据KCL，得到以下方程组：
+
 \begin{equation}
   \label{eq27}
   \begin{dcases}
@@ -462,8 +463,8 @@
   \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵$M$变为
   \begin{equation}
     M=\begin{bmatrix}
-    -\frac{C_1}{C_2} & \frac{C_1}{C_2}\\
-    -\frac{C_1}{C_2} & -\frac{C_2}{C_1}+\frac{C_1}{C_2}
+    -\dfrac{C_1}{C_2} & \dfrac{C_1}{C_2}\\ \\
+    -\dfrac{C_1}{C_2} & -\dfrac{C_2}{C_1}+\dfrac{C_1}{C_2}
   \end{bmatrix}
   \end{equation}
 \end{enumerate}
