@@ -247,7 +247,7 @@
   J(a)=\frac{1}{2}\int_{-\pi}^{\pi}\cos(au)\cos^k u\,\di u.
 \end{equation}
 
-令$z=\e{\ii u}$，则$\di u=\di z/(\ii z)$，留数计算可得
+令$z=\e{\ii u}$，则$\di u=\di z/(\ii z)$，留数计算(计算过程见附录\ref{A})可得
 \begin{align}
   J(a)&=\frac{\pi}{2^k}\,
   \frac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!},
@@ -274,13 +274,12 @@
 \end{align}
 
 最终，等效电阻的级数公式为
-\begin{align}
-  R_{mn}=&\frac{r}{2}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
-  \Bigg[\left(\frac{(2k)!}{k!k!}\right)^2\nonumber\\
-  &-\frac{(m+n+2k)!^2}
+\begin{equation}
+  R_{mn}=\frac{r}{2}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
+  \Bigg[\left(\frac{(2k)!}{k!k!}\right)^2\nonumber-\frac{(m+n+2k)!^2}
   {2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\Bigg].
 \label{eq:R_series}
-\end{align}
+\end{equation}
 
 公式(\ref{eq:R_series})收敛迅速，适合数值计算。当$m=n=0$时，$R_{00}=0$；
 对于$m,n$较大时，级数项以$2^{-4k}$衰减。
@@ -579,6 +578,72 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 
 % ==================== 附录 ====================
 \appendix
+\section{$I$的计算过程}\label{A}
+记
+\begin{equation}
+  J(a)=\dfrac{1}{2}\int_{-\pi}^\pi\cos au\cos^ku\di u
+\end{equation}
+
+令$z=\e{\ii u}$，则有
+\begin{equation}
+  \di z=\ii\e{\ii u}\di u=\ii z\di u
+\end{equation}
+\begin{align*}
+  J(a)&=\dfrac{1}{2\ii}\oint_{|z|\leqslant1}\dfrac{z^a+z^{-a}}{2}\dfrac{\left(z+z^{-1}\right)^k}{2^k}z^{-1}\di z\\
+  &=\dfrac{1}{2^{k+2}\ii}\oint_{|z|\leqslant1}\dfrac{\left(z^{2a}+1\right)}{z^{a+k+1}}\left(z^2+1\right)^k\di z\\
+  &=\dfrac{1}{2^{k+2}\ii}\oint_{|z|\leqslant1}\sum_{t=0}^{k}\binom{k}{t}z^{2t}\dfrac{\left(z^{2a}+1\right)}{z^{a+k+1}}\di z\\
+  &=\dfrac{-\ii}{2^{k+2}}\sum_{t=0}^{k}\binom{k}{t}\oint_{|z|\leqslant1}\left(\dfrac{1}{z^{k+a+1-2t}}+\dfrac{1}{z^{k-a+1-2t}}\right)\di z\\
+\end{align*}
+
+利用留数定理，只需算被积函数洛朗展开$z^{-1}$系数
+\begin{align*}
+  J(a)&=\dfrac{\pi}{2^{k+1}}\left[\binom{k}{\frac{k+a}{2}}+\binom{k}{\frac{k-a}{2}}\right]\\
+  &=\dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!}
+\end{align*}
+
+考虑$J(a)$关于$k$的取值，
+\begin{equation}
+  J(a)=
+  \begin{dcases}
+    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!},&|a|\leqslant k,k\equiv a(\text{mod}2)\\
+    0,&\text{other}.
+  \end{dcases}
+\end{equation}
+
+同理于$J(a)$，
+\begin{equation}
+  J(b)=
+  \begin{dcases}
+    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+b}{2}\right)!\left(\frac{k-b}{2}\right)!},&|b|\leqslant k,k\equiv b(\text{mod}2)\\
+    0,&\text{other}.
+  \end{dcases}
+\end{equation}
+
+考虑$J(a)J(b)$：
+\begin{enumerate}
+  \item $a,b$必然同奇偶；
+  \item 三角不等式$|a|\geqslant|b|$。
+\end{enumerate}
+故$I_2$的求和中只有$k=a+2p,p=0,1,2,\cdots$对求和有贡献。所以，$I_2$中关于$k$的求和换成对$p$的求和
+\begin{align}
+  I_2=\sum_{p=0}^{\infty}\dfrac{2\pi^2}{2^{2a+4p}}\dfrac{(a+2p)!}{p!(a+p)!}\dfrac{(a+2p)!}{(\frac{a-b}{2}+p)!(\frac{a+b}{2}+p)!}
+\end{align}
+
+注意$a,b$的定义式，并将$p$替换回$k$，又有
+\begin{equation}
+  I_2=\dfrac{2\pi^2}{2^{2(m+n)}}\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\dfrac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}
+\end{equation}
+
+结合$I_1,I_2$的表达式，得出积分$I$的级数为
+\begin{align*}
+  I&=I_1-I_2\\
+  &=2\pi^2\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\left[\left(\dfrac{(2k)!}{k!k!}\right)^2\right.\\
+  &\left.-\dfrac{(m+n+2k)!^2}{2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\right]
+\end{align*}
+
+
+
+
 
 \section{$J_n(B)$ 的完整推导}
 
