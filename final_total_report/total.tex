@@ -444,9 +444,25 @@
   V_B^n=\left(-\dfrac{C_1}{C_2}\right)^{N-n}V_B^N=\dfrac{\omega^2C_1L}{\omega^2C_1L-1}\left(-\frac{C_1}{C_2}\right)^{2N-n}V_A^0=\left(-\frac{C_1}{C_2}\right)^{2N-n+1}V_A^0
 \end{equation}
 
+如果此时规定$V_B^N=0$，则$V_B^n=0$，即所有$B$节点电压为0，而$A$节点的电压保持不变。
 
+此外在该电路任意$B$节点控制电压，$A$节点电压完全不受影响，即$A$，$B$完全解耦合。
 
+  \item 当$\omega=\dfrac{1}{\sqrt{LC_1}}$时，传输矩阵$M$变为
+  \begin{equation}
+    M=\begin{bmatrix}
+    -\frac{C_1}{C_2} & 1\\
+    -1 & 0
+  \end{bmatrix}
+  \end{equation}
 
+  \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵$M$变为
+  \begin{equation}
+    M=\begin{bmatrix}
+    -\frac{C_1}{C_2} & \frac{C_1}{C_2}\\
+    -\frac{C_1}{C_2} & -\frac{C_2}{C_1}+\frac{C_1}{C_2}
+  \end{bmatrix}
+  \end{equation}
 \end{enumerate}
 
 
