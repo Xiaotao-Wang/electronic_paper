@@ -376,12 +376,12 @@
         \draw (1,-4) node[ground]{};
 
     \end{circuitikz}
-    \caption{耦合电容阵列电路图}
+    \caption{耦合阵列电路图}
     \label{fig:4}
 \end{figure}
 
 \subsection{各点电压值理论推导}
-晶胞编号：$1\leqslant i \leqslant N$，节点编号：$A,B$。考虑第$n$和$n+1$个晶胞中的节点，其电压分别为$V_{A}^n$和$V_{B}^n$。
+晶胞编号：$1\leqslant i \leqslant N$，节点编号：$A,B$。考虑第$n$和$n-1$个晶胞中的节点，其电压分别为$V_{A}^n$和$V_{B}^n$。
 根据KCL，得到以下方程组：
 
 \begin{equation}
@@ -418,18 +418,19 @@
   \item 当$\omega=\dfrac{1}{\sqrt{L(C_1+C_2)}}$时，传输矩阵$M$变为
   \begin{equation}
     M=\begin{bmatrix}
-    -\frac{C_1}{C_2} & 0\\
-    0& - \frac{C_2}{C_1}
+    -\dfrac{C_1}{C_2} & 0\\
+    0& - \dfrac{C_2}{C_1}
   \end{bmatrix}
   \end{equation}
 
   对于$A$而言，
   \begin{equation}
-    V_A^n = \left(-\frac{C_1}{C_2}\right)^n V_A^0.
+    V_A^n = \left(-\dfrac{C_1}{C_2}\right)^n V_A^0.
   \end{equation}
 
   对于$n=N$，由于阵列有限长，末端电压需要用额外方程确定方程(\ref{eq27})改写为
   \begin{equation}
+    \label{eq33}
     \begin{dcases}
       \ii\omega C_1\left(V_{A}^N - V_{B}^N\right) + \ii\omega C_2\left(V_{A}^N - V_{B}^{N-1}\right)+ \frac{V_{A}^N-0}{\ii\omega L} = 0,\\
       \ii\omega C_1\left(V_{B}^N - V_{A}^N\right) + \frac{V_{B}^N-0}{\ii\omega L} = 0. 
@@ -444,30 +445,138 @@
   V_B^n=\left(-\dfrac{C_1}{C_2}\right)^{N-n}V_B^N=\dfrac{\omega^2C_1L}{\omega^2C_1L-1}\left(-\frac{C_1}{C_2}\right)^{2N-n}V_A^0=\left(-\frac{C_1}{C_2}\right)^{2N-n+1}V_A^0
 \end{equation}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{电压值.png}
+  \caption{谐振时电压的变化情况}
+\end{figure}
+
 如果此时规定$V_B^N=0$，则$V_B^n=0$，即所有$B$节点电压为0，而$A$节点的电压保持不变。
 
 此外在该电路任意$B$节点控制电压，$A$节点电压完全不受影响，即$A$，$B$完全解耦合。
 
-  \item 当$\omega=\dfrac{1}{\sqrt{LC_1}}$时，传输矩阵$M$变为
+  \item 当$\omega=\dfrac{1}{\sqrt{LC_1}}$时，传输矩阵变为
   \begin{equation}
     M=\begin{bmatrix}
-    -\frac{C_1}{C_2} & 1\\
+    -\dfrac{C_1}{C_2} & 1\\
     -1 & 0
   \end{bmatrix}
   \end{equation}
 
+同样关注方程(\ref{eq27})(\ref{eq33})，解出末端电压为
+\begin{equation}
+  \begin{dcases}
+    V_A^N=0\\
+    V_B^N=\text{任意值，因为谐振}
+  \end{dcases}
+\end{equation}
+
+而对于$n=1,2,\dots,N-1$，
+\begin{equation}
+  \label{eq38}
+  \begin{dcases}
+    V_A^n = -\frac{C_1}{C_2}V_A^{n-1}+V_B^{n-1}\\
+    V_B^n=-V_A^{n-1}
+  \end{dcases}
+\end{equation}
+
+解方程组(\ref{eq38})，得到特征方程
+\begin{equation}
+  \lambda^2+\frac{C_1}{C_2}\lambda+1=0
+\end{equation}
+
+解得
+\begin{equation}
+  \lambda_{\pm}=-\dfrac{C_1}{2C_2}\pm\sqrt{\left(\dfrac{C_1}{2C_2}\right)^2-1}
+\end{equation}
+
+\begin{enumerate}
+  \item 若$C_1>2C_2$，则$\lambda_{\pm}$为实数，系统呈现振荡行为。
+  
+  \begin{equation}
+    \begin{dcases}
+      V_A^0=\alpha\lambda_+^0+\beta\lambda_-^0\\
+      V_A^N=\alpha\lambda_+^N+\beta\lambda_-^N=0
+    \end{dcases}
+  \end{equation}
+
+  解得
+  \begin{equation}
+    \begin{dcases}
+      \alpha=\dfrac{V_A^0}{1-\left(\dfrac{\lambda_+}{\lambda_-}\right)^N}\\
+      \beta=-\dfrac{V_A^0}{1-\left(\dfrac{\lambda_-}{\lambda_+}\right)^N}
+    \end{dcases}
+  \end{equation}
+
+  则
+  \begin{equation}
+    V_A^n=\dfrac{V_A^0}{1-\left(\dfrac{\lambda_+}{\lambda_-}\right)^N}\lambda_+^n-\dfrac{V_A^0}{1-\left(\dfrac{\lambda_-}{\lambda_+}\right)^N}\lambda_-^n
+  \end{equation}
+  \item 若$C_1=2C_2$，则$\lambda_{\pm}=-1$，系统呈现临界阻尼行为。
+  \begin{equation}
+    V_A^n=\left(\alpha+\beta n\right)\left(-1\right)^n
+  \end{equation}
+
+  代入边界条件
+  \begin{equation}
+    \begin{dcases}
+      V_A^0=\alpha=V_A^0\\
+      V_A^N=\left(\alpha+\beta N\right)\left(-1\right)^N=0
+    \end{dcases}
+  \end{equation}
+
+  解得
+  \begin{equation}
+    \begin{dcases}
+      \alpha=V_A^0\\
+      \beta=-\dfrac{V_A^0}{N}
+    \end{dcases}
+  \end{equation}
+
+  则
+  \begin{equation}
+    V_A^n=V_A^0\left(1-\dfrac{n}{N}\right)\left(-1\right)^n
+  \end{equation}
+  \item 若$C_1<2C_2$，则$\lambda_{\pm}$为复数，系统呈现振动行为。
+  
+  两根满足$\lambda_+\lambda_-=1$，对应两个共轭复数，则有
+  \begin{equation}
+    \begin{dcases}
+      V_A^0=\alpha\\
+      V_A^N\e{\frac{C_1}{2C_2}N}=\alpha\cos\left(\sqrt{1-\left(\dfrac{C_1}{2C_2}\right)^2}N\right)+\beta\sin\left(\sqrt{1-\left(\dfrac{C_1}{2C_2}\right)^2}N\right)=0
+    \end{dcases}
+  \end{equation}
+\end{enumerate}
+
+如此
+\begin{equation}
+  V_A^n=V_A^0\left[\cos\left(\sqrt{1-\left(\dfrac{C_1}{2C_2}\right)^2}n\right)-\cot\left(\sqrt{1-\left(\dfrac{C_1}{2C_2}\right)^2}N\right)\sin\left(\sqrt{1-\left(\dfrac{C_1}{2C_2}\right)^2}n\right)\right]\e{-\frac{C_1}{2C_2}n}
+\end{equation}
 
 
-
-
-
-  \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵$M$变为
+  \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵变为
   \begin{equation}
     M=\begin{bmatrix}
     -\dfrac{C_1}{C_2} & \dfrac{C_1}{C_2}\\ \\
     -\dfrac{C_1}{C_2} & -\dfrac{C_2}{C_1}+\dfrac{C_1}{C_2}
   \end{bmatrix}
   \end{equation}
+
+  得到的特征方程为
+  \begin{equation}
+    \lambda^2+\dfrac{C_2}{C_1}\lambda+1=0
+  \end{equation}
+
+  注意边界条件需要用到
+  \begin{equation}
+    \begin{dcases}
+      C_2V_A^N=-C_1V_A^{N-1}+C_1V_B^{N-1}\\
+      C_1V_B^N-C_1V_A^N-C_2V_B^N=0
+    \end{dcases}
+  \end{equation}
+  接下来与上一个情况类似，同时需要考虑$C_1=C_2$的特殊情况，这里$V_A^n$和$V_B^n$的表达式从略。
+
+
 \end{enumerate}
 
 
@@ -687,32 +796,7 @@ $U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。复合 $x=1-\alpha+\alpha\cos k_1$
     \item 当 $\alpha > 1$（即 $\omega > 1/\sqrt{LC}$）时，阻抗一般不为零，且其行为取决于 $m,n$ 的具体值。
 \end{enumerate}
 
-图\ref{fig:Z_omega}展示了 $m=1,n=0$ 时阻抗模值 $|\tilde Z(\omega)|$ 随频率的变化。根据理论，该情况下 $\tilde Z(\omega)$ 在 $\omega < 1/\sqrt{LC}$ 时恒为零，在 $\omega = 1/\sqrt{LC}$ 处为零，在 $\omega > 1/\sqrt{LC}$ 时随频率增大而增大。这清晰地展示了带隙和通带行为。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{example-image}
-  \caption{$LC$网格阻抗模值$|\tilde Z(\omega)|$随频率的变化（$m=1,n=0$，$L=C=1$）}
-  \label{fig:Z_omega}
-\end{figure}
-
-表\ref{tab:compare}对比了两种数值方法的计算时间。经过留数降维后，计算效率提升约两个数量级。
-
-\begin{table}[H]
-  \centering
-  \caption{数值计算效率对比}
-  \label{tab:compare}
-  \begin{tabular}{|c|c|c|c|}
-    \hline
-    网格类型 & 方法 & 积分维度 & 计算时间 (s) \\
-    \hline
-    电阻网格 & 直接数值积分 & 2D & 12.4 \\
-    电阻网格 & 级数求和 & 1D & 0.8 \\
-    $LC$网格 & 直接数值积分 & 2D & 15.7 \\
-    $LC$网格 & 解析理论 & 0D & 0.01 \\
-    \hline
-  \end{tabular}
-\end{table}
 
 \section{结论}
 
@@ -739,26 +823,27 @@ $U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。复合 $x=1-\alpha+\alpha\cos k_1$
 
 \section*{参考文献}
 
-[1] 舒幼生，胡望雨，陈秉乾. 物理学难题集萃. 下册[M]. 中国科学技术大学出版社，
+[1] 舒幼生，胡望雨，陈秉乾. 物理学难题集萃. 上册[M]. 中国科学技术大学出版社，
 2014: 611-616.
 
-[2] Einstein A. Zur Elektrodynamik bewegter Körper[J]. Annalen der Physik,
-1905, 17: 891-921.
+% [2] Einstein A. Zur Elektrodynamik bewegter Körper[J]. Annalen der Physik,
+% 1905, 17: 891-921.
 
-[3] 张三，李四. 量子纠缠的物理教学探讨[J]. 物理通报，2023, (5): 45-49.
+% [3] 张三，李四. 量子纠缠的物理教学探讨[J]. 物理通报，2023, (5): 45-49.
 
-[4] Cserti J. Application of the lattice Green's function for calculating
-the resistance of an infinite network of resistors[J]. American Journal of
-Physics, 2000, 68(10): 896-906.
+% [4] Cserti J. Application of the lattice Green's function for calculating
+% the resistance of an infinite network of resistors[J]. American Journal of
+% Physics, 2000, 68(10): 896-906.
 
-[5] Asatryan A A, et al. Two-dimensional LC networks: anomalous transmission
-and reflection[J]. Physical Review E, 2001, 63(5): 056612.
+% [5] Asatryan A A, et al. Two-dimensional LC networks: anomalous transmission
+% and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 
-[6] Gradshteyn I S, Ryzhik I M. Table of Integrals, Series, and Products[M]. 7th ed. Academic Press, 2007.
+% [6] Gradshteyn I S, Ryzhik I M. Table of Integrals, Series, and Products[M]. 7th ed. Academic Press, 2007.
 
-[7] Olver F W J, et al. NIST Handbook of Mathematical Functions[M]. Cambridge University Press, 2010.
+% [7] Olver F W J, et al. NIST Handbook of Mathematical Functions[M]. Cambridge University Press, 2010.
 
 % ==================== 附录 ====================
+\clearpage
 \appendix
 \section{$I$的计算过程}\label{A}
 记
@@ -778,16 +863,15 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 \end{align*}
 
 利用留数定理，只需算被积函数洛朗展开$z^{-1}$系数
-\begin{align*}
-  J(a)&=\dfrac{\pi}{2^{k+1}}\left[\binom{k}{\frac{k+a}{2}}+\binom{k}{\frac{k-a}{2}}\right]\\
-  &=\dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!}
-\end{align*}
+\begin{equation}
+  J(a)=\dfrac{\pi}{2^{k+1}}\left[\binom{k}{\frac{k+a}{2}}+\binom{k}{\frac{k-a}{2}}\right]=\dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!}
+\end{equation}
 
 考虑$J(a)$关于$k$的取值，
 \begin{equation}
   J(a)=
   \begin{dcases}
-    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!},&|a|\leqslant k,k\equiv a(\text{mod}2)\\
+    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!},&|a|\leqslant k,k\equiv a\,(\text{mod}2)\\
     0,&\text{other}.
   \end{dcases}
 \end{equation}
@@ -796,7 +880,7 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 \begin{equation}
   J(b)=
   \begin{dcases}
-    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+b}{2}\right)!\left(\frac{k-b}{2}\right)!},&|b|\leqslant k,k\equiv b(\text{mod}2)\\
+    \dfrac{\pi}{2^k}\dfrac{k!}{\left(\frac{k+b}{2}\right)!\left(\frac{k-b}{2}\right)!},&|b|\leqslant k,k\equiv b\,(\text{mod}2)\\
     0,&\text{other}.
   \end{dcases}
 \end{equation}
@@ -817,18 +901,16 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 \end{equation}
 
 结合$I_1,I_2$的表达式，得出积分$I$的级数为
-\begin{align*}
-  I&=I_1-I_2\\
-  &=2\pi^2\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\left[\left(\dfrac{(2k)!}{k!k!}\right)^2\right.\\
-  &\left.-\dfrac{(m+n+2k)!^2}{2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\right]
-\end{align*}
+\begin{equation}
+  I=I_1-I_2=2\pi^2\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\left[\left(\dfrac{(2k)!}{k!k!}\right)^2-\dfrac{(m+n+2k)!^2}{2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\right]
+\end{equation}
 
 
 
 
 
 \section{$J_n(B)$ 的完整推导}
-
+\label{B}
 \subsection{从实积分到围道积分}
 
 计算
@@ -838,15 +920,15 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 \end{equation}
 其中 $B$ 是实参数，$n$ 是非负整数。当 $|B|\le 1$ 时分母有实零点，积分理解为主值。
 
-利用Euler公式 $\cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}$，作变量代换 $z = e^{i\theta}$。当 $\theta$ 从 $-\pi$ 变到 $\pi$ 时，$z$ 沿单位圆周 $C$（$|z|=1$）逆时针绕行一周。在此代换下：
+作变量代换 $z = \e{\ii\theta}$。当 $\theta$ 从 $-\pi$ 变到 $\pi$ 时，$z$ 沿单位圆周 $C$（$|z|=1$）逆时针绕行一周。在此代换下：
 \begin{equation}
-    \cos\theta = \frac{z+z^{-1}}{2},\qquad \cos(n\theta) = \frac{z^n+z^{-n}}{2},\qquad \di\theta = \frac{\di z}{iz}.
+    \cos\theta = \frac{z+z^{-1}}{2},\qquad \cos(n\theta) = \frac{z^n+z^{-n}}{2},\qquad \di\theta = \frac{\di z}{\ii z}.
 \end{equation}
 
 代入 $J_n(B)$：
 \begin{align}
-    J_n(B) &= \oint_C \frac{z^n+z^{-n}}{2}\cdot \frac{2}{2B+z+z^{-1}}\cdot \frac{\di z}{iz} \nonumber\\
-    &= \frac{1}{i}\oint_C \frac{z^n+z^{-n}}{z^2+2Bz+1} \di z.
+    J_n(B) &= \oint_C \frac{z^n+z^{-n}}{2}\cdot \frac{2}{2B+z+z^{-1}}\cdot \dfrac{\di z}{\ii z} \nonumber\\
+    &= \dfrac{1}{\ii}\oint_C \dfrac{z^n+z^{-n}}{z^2+2Bz+1} \di z.
     \label{eq:A2}
 \end{align}
 
@@ -854,7 +936,7 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 \begin{equation}
     \frac{z^n}{z^2+2Bz+1} + \frac{z^{-n}}{z^2+2Bz+1}.
 \end{equation}
-第一项在 $z=0$ 处解析（$n\ge 0$）。第二项在 $z=0$ 处有 $n$ 阶极点（$n\ge 1$）。分母 $z^2+2Bz+1$ 的零点为
+第一项在 $z=0$ 处解析（$n\geqslant 0$）。第二项在 $z=0$ 处有 $n$ 阶极点（$n\geqslant 1$）。分母 $z^2+2Bz+1$ 的零点为
 \begin{equation}
     z_{\pm} = -B \pm \sqrt{B^2-1},
     \label{eq:A3}
@@ -863,7 +945,7 @@ and reflection[J]. Physical Review E, 2001, 63(5): 056612.
 
 \subsection{情况一：$|B| > 1$}
 
-此时 $z_{\pm}$ 均为实数，一根在单位圆内，一根在圆外。以 $B>1$ 为例：$z_+ = -B+\sqrt{B^2-1} \in (-1,0)$ 在圆内，$z_- < -1$ 在圆外。圆内极点为 $z=0$（$n\ge 1$）和 $z=z_+$。
+此时 $z_{\pm}$ 均为实数，一根在单位圆内，一根在圆外。以 $B>1$ 为例：$z_+ = -B+\sqrt{B^2-1} \in (-1,0)$ 在圆内，$z_- < -1$ 在圆外。圆内极点为 $z=0$（$n\geqslant 1$）和 $z=z_+$。
 
 $z=0$ 处留数：令 $g(z) = 1/(z^2+2Bz+1)$，其 Taylor 展开系数为 $a_k = (-1)^k U_k(B)$，其中 $U_k$ 是第二类 Chebyshev 多项式。因此
 \begin{equation}
@@ -875,12 +957,12 @@ $z=z_+$ 处留数：
     \operatorname{Res}(z_+) = \frac{z_+^n+z_+^{-n}}{z_+-z_-} = \frac{z_+^n+z_+^{-n}}{2\sqrt{B^2-1}}.
 \end{equation}
 
-由留数定理 $\frac{1}{i}\oint_C f(z)\di z = 2\pi\sum_{\text{圆内}}\operatorname{Res}$：
+由留数定理：
 \begin{equation}
     J_n(B) = 2\pi\left[(-1)^{n-1}U_{n-1}(B) + \frac{z_+^n+z_+^{-n}}{2\sqrt{B^2-1}}\right].
 \end{equation}
 
-令 $B=\cosh t$（$t>0$），则 $z_+ = -e^{-t}$，$\sqrt{B^2-1} = \sinh t$。利用恒等式 $U_{n-1}(\cosh t) = \sinh(nt)/\sinh t$（见附录B），可化简为
+令 $B=\cosh t$（$t>0$），则 $z_+ = -\e{-t}$，$\sqrt{B^2-1} = \sinh t$。利用恒等式 $U_{n-1}(\cosh t) = \dfrac{\sinh(nt)}{\sinh t}$（见附录\ref{C}），可化简为
 \begin{equation}
     J_n(B) = \frac{2\pi z_+^n}{\sqrt{B^2-1}}.
 \end{equation}
@@ -894,14 +976,14 @@ $z=z_+$ 处留数：
 
 \subsection{情况二：$|B| \le 1$（主值）}
 
-此时 $z_{\pm} = -B \pm i\sqrt{1-B^2}$，满足 $|z_{\pm}|=1$，两根均在单位圆周上。积分需理解为主值。采用推迟格林函数方法，令 $B \to B+i\epsilon$（$\epsilon \to 0^+$），计算后取实部。
+此时 $z_{\pm} = -B \pm \ii\sqrt{1-B^2}$，满足 $|z_{\pm}|=1$，两根均在单位圆周上。积分需理解为主值。采用推迟格林函数方法，令 $B \to B+\ii\varepsilon$（$\varepsilon \to 0^+$），计算后取实部。
 
-令 $\cos\theta_0 = -B$，$\sin\theta_0 = \sqrt{1-B^2}$。在 $\epsilon \to 0^+$ 极限下，$z_+$ 移到圆内，$z_-$ 移到圆外。留数之和为
+令 $\cos\theta_0 = -B$，$\sin\theta_0 = \sqrt{1-B^2}$。在 $\varepsilon \to 0^+$ 极限下，$z_+$ 移到圆内，$z_-$ 移到圆外。留数之和为
 \begin{equation}
-    \operatorname{Res}_{\text{tot}} = (-1)^{n-1}U_{n-1}(B) - i\frac{\cos(n\theta_0)}{\sin\theta_0}.
+    \operatorname{Res}_{\text{tot}} = (-1)^{n-1}U_{n-1}(B) - \ii\dfrac{\cos(n\theta_0)}{\sin\theta_0}.
 \end{equation}
 
-推迟格林函数 $J_n^{\text{ret}}(B) = 2\pi[(-1)^{n-1}U_{n-1}(B) - i\cos(n\theta_0)/\sin\theta_0]$。取实部得主值：
+推迟格林函数 $J_n^{\text{ret}}(B) = 2\pi\left[(-1)^{n-1}U_{n-1}(B) - \ii\dfrac{\cos(n\theta_0)}{\sin\theta_0}\right]$。取实部得主值：
 \begin{equation}
     J_n^{\text{PV}}(B) = 2\pi(-1)^{n-1}U_{n-1}(B) = 2\pi U_{n-1}(-B),
 \end{equation}
@@ -918,15 +1000,15 @@ $z=z_+$ 处留数：
     \label{eq:A5}
 \end{equation}
 
-\section{$U_k(\cosh t) = \sinh((k+1)t)/\sinh t$ 的证明}
+\section{$U_k(\cosh t) = \sinh((k+1)t)/\sinh t$ 的证明}\label{C}
 
-此恒等式在附录A中用于化简 $J_n(B)$。用数学归纳法证明。
+此恒等式在附录\ref{B}中用于化简 $J_n(B)$。用数学归纳法证明。
 
-$k=0$：$U_0(\cosh t) = 1 = \sinh t/\sinh t$，成立。
+$k=0$：$U_0(\cosh t) = 1 = \dfrac{\sinh t}{\sinh t}$，成立。
 
-$k=1$：$U_1(\cosh t) = 2\cosh t = \sinh(2t)/\sinh t$，成立。
+$k=1$：$U_1(\cosh t) = 2\cosh t = \dfrac{\sinh(2t)}{\sinh t}$，成立。
 
-归纳步：设对 $k-1$ 和 $k$ 成立（$k\ge 1$）。由 Chebyshev 递推 $U_{k+1}(x) = 2xU_k(x) - U_{k-1}(x)$：
+归纳步：设对 $k-1$ 和 $k$ 成立（$k\geqslant 1$）。由 Chebyshev 递推 $U_{k+1}(x) = 2xU_k(x) - U_{k-1}(x)$：
 \begin{align}
     U_{k+1}(\cosh t) &= 2\cosh t\cdot U_k(\cosh t) - U_{k-1}(\cosh t) \nonumber\\
     &= 2\cosh t\frac{\sinh((k+1)t)}{\sinh t} - \frac{\sinh(kt)}{\sinh t} \nonumber\\
@@ -944,7 +1026,7 @@ $k=1$：$U_1(\cosh t) = 2\cosh t = \sinh(2t)/\sinh t$，成立。
 \end{equation}
 归纳完成。
 
-\section{$S_K = \int_{-\pi}^{\pi} \frac{\sin(K\theta)}{\sin\theta} \di\theta$ 的计算}
+\section{$S_K = \int_{-\pi}^{\pi} \frac{\sin(K\theta)}{\sin\theta} \di\theta$ 的计算}\label{D}
 
 此积分在 $\alpha=1$ 的精确解中使用。
 
@@ -978,9 +1060,9 @@ $K$ 为偶数：令 $K=2M$（$M\ge 1$）：
 
 由 Euler 公式和二项式定理：
 \begin{align}
-    \cos^j\theta &= \left(\frac{e^{i\theta}+e^{-i\theta}}{2}\right)^j
-    = \frac{1}{2^j}\sum_{p=0}^j \binom{j}{p} e^{i(j-2p)\theta} \nonumber\\
-    &= \frac{1}{2^j}\sum_{p=0}^j \binom{j}{p} \cos((j-2p)\theta),
+    \cos^j\theta &= \left(\dfrac{\e{\ii\theta}+\e{-\ii\theta}}{2}\right)^j
+    = \dfrac{1}{2^j}\sum_{p=0}^j \binom{j}{p} \e{\ii(j-2p)\theta} \nonumber\\
+    &= \dfrac{1}{2^j}\sum_{p=0}^j \binom{j}{p} \cos(j-2p)\theta,
     \label{eq:D1}
 \end{align}
 其中利用了 $p$ 和 $j-p$ 两项的虚部对消。展开式中出现的余弦频率为 $|j-2p|$（$p=0,\dots,j$），均 $\le j$。
@@ -1015,7 +1097,7 @@ $K$ 为偶数：令 $K=2M$（$M\ge 1$）：
     \cos(mk_1)\cos((j-2p)k_1) = \frac{1}{2}\left[\cos((m+j-2p)k_1) + \cos((m-j+2p)k_1)\right].
 \end{equation}
 
-积分 $\int_{-\pi}^{\pi}\cos(Kk_1)\di k_1$ 当 $K=0$ 时为 $2\pi$，$K\neq 0$ 时为零。
+积分 $\int\limits_{-\pi}^{\pi}\cos(Kk_1)\di k_1$ 当 $K=0$ 时为 $2\pi$，$K\neq 0$ 时为零。
 
 当 $m\ge n$ 时，对所有 $j\le n-1$ 和 $p\in[0,j]$：
 \begin{itemize}
