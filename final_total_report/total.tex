@@ -379,6 +379,47 @@
     \label{fig:4}
 \end{figure}
 
+\subsection{各点电压值理论推导}
+晶胞编号：$1\leqslant i \leqslant N$，节点编号：$A,B$。考虑第$n$和$n+1$个晶胞中的节点，其电压分别为$V_{A}^n$和$V_{B}^n$。
+根据KCL，得到以下方程组：
+\begin{equation}
+  \begin{dcases}
+    \ii\omega C_1\left(V_{A}^n - V_{B}^n\right) + \ii\omega C_2\left(V_{A}^n - V_{B}^{n-1}\right)+ \frac{V_{A}^n-0}{\ii\omega L} = 0,\\
+    \ii\omega C_1\left(V_{B}^{n-1} - V_{A}^{n-1}\right) + \ii\omega C_2\left(V_{B}^{n-1} - V_{A}^{n}\right)+ \frac{V_{B}^{n-1}-0}{\ii\omega L} = 0. 
+  \end{dcases}
+\end{equation}
+
+定义
+\begin{equation}
+  V[n]=\begin{bmatrix}
+    V_A^n\\
+    V_B^n
+  \end{bmatrix}
+\end{equation}
+
+于是可以得到
+
+\begin{equation}
+  V[n]=\begin{bmatrix}
+-\frac{C_1}{C_2} & 
+\frac{1}{C_2} \left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right] \\
+-\frac{1}{C_2} \left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right] & 
+- \frac{C_2}{C_1}+\frac{1}{C_1 C_2}\left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right]^2 
+
+  \end{bmatrix}V[n-1]
+\end{equation}
+其中$n=1,2,\dots,N-1$。
+
+
+
+
+
+
+
+
+
+
+
 
 
 \section{$LC$网格的阻抗积分}
