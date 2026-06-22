@@ -84,7 +84,7 @@ Y = build_Y(omega0)
 Y[0, 0] += 1 / Rs
 
 # 给最后一个79号接地 就是给他加一个爆大的导纳
-Y[N_nodes-1, N_nodes-1] += 1e100
+Y[N_nodes-1, N_nodes-1] += 0
 
 # 将Norton电流源并联到节点0
 I = mpmath.matrix(N_nodes, 1)
