@@ -30,6 +30,7 @@
 \newcommand{\e}[1]{\mathrm{e}^{#1}}
 \newcommand{\f}[1]{\mathscr{F}\left[#1\right]}
 \newcommand{\fo}[1]{\mathscr{F}^{-1}\left[#1\right]}
+\DeclareMathOperator{\sgn}{sgn}
 \ctikzset{
     bipoles/length = 1cm,
     resistors/scale = 0.8,
@@ -630,79 +631,37 @@
 
 
 
-
-
-
-
-
-
-
-\section{$LC$网格的阻抗积分}
+\section{$LC$网格在临界频率的阻抗}
 
 \subsection{问题背景与频域方程}
 
-现在我们考虑另一类二维无穷网格：横向（$x$方向）由电容$C$连接，纵向（$y$方向）
-由电感$L$连接。在节点$(0,0)$注入交流电流$I$（角频率$\omega$），在$(m,n)$流出。
-任意节点的电势记为$V(x,y)$。
+考虑二维无穷网格：横向（$x$方向）由电容$C$连接，纵向（$y$方向）由电感$L$连接。在节点$(0,0)$注入交流电流$I$（角频率$\omega$），在$(m,n)$流出。任意节点的电势记为$V(x,y)$。
 
-根据KCL，对任意节点$(x,y)$，流出电流之和为
-\begin{align}
-  &\frac{V(x,y)-V(x-1,y)}{1/(\ii\omega C)}
-  +\frac{V(x,y)-V(x+1,y)}{1/(\ii\omega C)}\nonumber\\
-  &+\frac{V(x,y)-V(x,y-1)}{\ii\omega L}
-  +\frac{V(x,y)-V(x,y+1)}{\ii\omega L}
-  =I(x,y),
-\end{align}
-其中$I(x,y)$的定义与式(\ref{eq1})相同。
-
-整理并乘以$-\ii$，得到
-\begin{align}
-  &\omega C\left[2V(x,y)-V(x-1,y)-V(x+1,y)\right]\nonumber\\
-  &-\frac{1}{\omega L}\left[2V(x,y)-V(x,y-1)-V(x,y+1)\right]
-  =-\ii I(x,y).
-\label{eq:LC_KCL}
-\end{align}
-
-采用与上节相同的Fourier变换约定。在频域中，差分算子化为
-\begin{align}
-  2V(x,y)-V(x-1,y)-V(x+1,y)
-  &\longrightarrow 4\sin^2\frac{k_1}{2}\,\tilde V(k_1,k_2),\\
-  2V(x,y)-V(x,y-1)-V(x,y+1)
-  &\longrightarrow 4\sin^2\frac{k_2}{2}\,\tilde V(k_1,k_2).
-\end{align}
-
-对源电流作变换：
+根据KCL，推导可得频域电势
 \begin{equation}
-  \tilde I(k_1,k_2)=I\left(1-\e{\ii(mk_1+nk_2)}\right).
-\end{equation}
-
-将上述结果代入方程(\ref{eq:LC_KCL})，得到频域电势：
-\begin{align}
   \tilde V(k_1,k_2)=
   \frac{\omega L I\left(1-\e{\ii(mk_1+nk_2)}\right)}
   {4\ii\left(\omega^2 LC\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}\right)}.
 \label{eq:LC_V_freq}
-\end{align}
+\end{equation}
 
-\subsection{阻抗积分表达式与格林函数}
-
-任意两点$(m,n)$与$(0,0)$之间的等效阻抗定义为
+等效阻抗定义为
 \begin{equation}
   \tilde Z(\omega)=\frac{V(m,n)-V(0,0)}{I}.
 \end{equation}
 
-利用Fourier逆变换将式(\ref{eq:LC_V_freq})代入，可得阻抗的双重积分表达式：
-\begin{align}
+利用Fourier逆变换，阻抗可化为
+\begin{equation}
   \tilde Z(\omega)=
   \frac{-\ii\omega L}{4\pi^2}
   \int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
-  \frac{1-\e{\ii(mk_1+nk_2)}}
+  \frac{1-\cos(mk_1)\cos(nk_2)}
   {\omega^2 LC\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}}
   \,\di k_1\di k_2.
 \label{eq:Z_integral_2D}
-\end{align}
+\end{equation}
 
-引入核心的二维晶格格林函数
+定义核心积分
 \begin{equation}
     I(m,n;\alpha) \equiv
     \int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
@@ -711,139 +670,238 @@
     \,\di k_2\,\di k_1,
     \label{eq:I_mn_definition}
 \end{equation}
-其中 $\alpha \equiv \omega^2 LC$ 是无量纲频率参数。式(\ref{eq:Z_integral_2D})中的虚部在积分后贡献为零，因此有
+其中 $\alpha \equiv \omega^2 LC$。则
 \begin{equation}
     \tilde Z(\omega) = \frac{-\ii\omega L}{4\pi^2} I(m,n;\alpha).
     \label{eq:Z_I_relation}
 \end{equation}
-因此，$I(m,n;\alpha)$ 的解析性质直接决定了阻抗的行为。
 
-利用半角公式 $\sin^2(x/2) = (1-\cos x)/2$，分母可改写为
+\subsection{临界频率 $\alpha=1$ 的积分化简}
+
+当 $\alpha = \omega^2 LC = 1$，即 $\omega = 1/\sqrt{LC}$ 时，分母为
 \begin{equation}
-    \alpha \sin^2\frac{k_1}{2} - \sin^2\frac{k_2}{2}
-    = \frac{B(k_1) + \cos k_2}{2},
-    \label{eq:denominator_transform}
-\end{equation}
-其中
-\begin{equation}
-    B(k_1) \equiv \alpha(1-\cos k_1) - 1.
-    \label{eq:B_definition}
+    \sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}.
 \end{equation}
 
-对内层 $k_2$ 积分进行解析处理。定义
+作半角换元简化三角函数。令
 \begin{equation}
-    J_n(B) = \int_{-\pi}^{\pi} \frac{\cos(n\theta)}{B + \cos\theta} \di\theta, \quad n=0,1,2,\dots
-    \label{eq:J_n_definition}
+    x=\frac{k_1}{2},\qquad y=\frac{k_2}{2},
 \end{equation}
-利用 $\cos(mk_1)\cos(nk_2) = \cos(mk_1)\cos(n\theta)$，原积分化为
+则 $\di k_1=2\di x,\ \di k_2=2\di y$，积分区域变为 $[-\pi/2,\pi/2]^2$。于是
 \begin{equation}
-    I(m,n;\alpha) = 2\int_{-\pi}^{\pi} \left[J_0(B) - \cos(mk_1) J_n(B)\right] \di k_1.
-    \label{eq:I_to_J}
-\end{equation}
-
-\subsection{内层积分 $J_n(B)$ 的闭式}
-
-积分 $J_n(B)$ 的解析闭式依赖于参数 $B$ 的取值（详细推导见附录A）。结果如下：
-
-\begin{enumerate}
-    \item 当 $|B| > 1$ 时，分母无实零点，积分正则：
-    \begin{equation}
-        J_n(B) = \frac{2\pi z_{\text{in}}^n}{\sqrt{B^2-1}} \operatorname{sgn}(B),
-        \label{eq:J_n_regular}
-    \end{equation}
-    其中 $z_{\text{in}}$ 是方程 $z^2+2Bz+1=0$ 位于单位圆内的根。
-    \item 当 $|B| \le 1$ 时，积分理解为柯西主值：
-    \begin{equation}
-        J_0(B) = 0, \quad J_n(B) = 2\pi U_{n-1}(-B), \quad n\ge 1,
-        \label{eq:J_n_PV}
-    \end{equation}
-    其中 $U_k(x)$ 是第二类 Chebyshev 多项式。
-\end{enumerate}
-
-这一区分至关重要，因为它直接导致了 $I(m,n;\alpha)$ 在不同 $\alpha$ 区间的截然不同的行为。
-
-\subsection{$\alpha < 1$ 时的严格恒零条件}
-
-当 $\alpha < 1$ 时，由 $B = \alpha(1-\cos k_1) - 1$，可知 $B \in [-1, 2\alpha-1] \subset [-1, 1)$，即对所有 $k_1$ 都有 $|B| \le 1$。因此全域适用主值公式 (\ref{eq:J_n_PV})。代入式 (\ref{eq:I_to_J}) 得
-\begin{equation}
-    I(m,n;\alpha) = -4\pi \int_{-\pi}^{\pi} \cos(mk_1) U_{n-1}(1-\alpha+\alpha\cos k_1) \di k_1.
-    \label{eq:I_alpha_less_1}
+    I(m,n;1)=4\int_{-\pi/2}^{\pi/2}\int_{-\pi/2}^{\pi/2}
+    \frac{1-\cos(2mx)\cos(2ny)}
+    {\sin^2 x-\sin^2 y}
+    \,\di y\,\di x.
+    \label{eq:I_half_angle}
 \end{equation}
 
-$U_{n-1}(x)$ 是 $x$ 的 $n-1$ 次多项式。复合 $x=1-\alpha+\alpha\cos k_1$ 后，被积函数是 $\cos k_1$ 的至多 $n-1$ 次多项式。由傅里叶展开，$\cos^j k_1$ 可展开为 $\{\cos(\ell k_1): \ell=0,1,\dots,j\}$ 的线性组合（见附录D）。因此，当 $m \ge n$ 时，$\cos(mk_1)$ 的频率 $m$ 严格大于展开式中出现的所有余弦频率（均 $\le n-1$），由傅里叶正交性，每一项积分为零。从而得到核心结论：
+利用平方差公式：
 \begin{equation}
-    \boxed{\alpha < 1,\ m \ge n \implies I(m,n;\alpha) \equiv 0.}
-    \label{eq:theorem_alpha_less_1}
+    \sin^2 x-\sin^2 y = (\sin x-\sin y)(\sin x+\sin y).
 \end{equation}
-这是一个恒零性质，而非在特定 $\alpha$ 处的孤立零点。当 $m < n$ 时，积分结果为 $\alpha$ 的多项式（次数 $n-1$），典型例子如
+再由和差化积：
 \begin{equation}
-    I(0,1) = -8\pi^2, \quad I(0,2) = 16\pi^2(\alpha-1), \quad I(1,2) = -8\pi^2\alpha, \quad I(1,3) = 32\pi^2\alpha(\alpha-1).
-    \label{eq:I_examples}
+    \sin x-\sin y=2\cos\frac{x+y}{2}\sin\frac{x-y}{2},\qquad
+    \sin x+\sin y=2\sin\frac{x+y}{2}\cos\frac{x-y}{2},
+\end{equation}
+相乘得
+\begin{equation}
+    \sin^2 x-\sin^2 y = \sin(x+y)\sin(x-y).
+    \label{eq:sin_diff_product}
 \end{equation}
 
-\subsection{$\alpha = 1$ 的精确解}
-
-在临界点 $\alpha=1$，$B = -\cos k_1$，$-B = \cos k_1$。利用 Chebyshev 多项式的三角恒等式 $U_{n-1}(\cos k_1) = \dfrac{\sin(nk_1)}{\sin k_1}$（见附录\ref{C}），式 (\ref{eq:I_alpha_less_1}) 变为
+现在作变量替换
 \begin{equation}
-    I(m,n;1) = -4\pi \int_{-\pi}^{\pi} \cos(mk_1) \frac{\sin(nk_1)}{\sin k_1} \di k_1.
-    \label{eq:I_alpha_eq_1_start}
+    u=x+y,\qquad v=x-y.
+    \label{eq:uv_transform}
 \end{equation}
-利用积化和差和引理 $\int_{-\pi}^{\pi} \frac{\sin(K\theta)}{\sin\theta} \di\theta = 2\pi$（$K$ 为奇数），$0$（$K$ 为偶数）（见附录\ref{C}），可得
+则
+\begin{equation}
+    x=\frac{u+v}{2},\qquad y=\frac{u-v}{2},\qquad
+    \di x\,\di y = \frac{1}{2}\,\di u\,\di v.
+\end{equation}
+
+原积分区域 $x,y\in[-\pi/2,\pi/2]$ 映射为菱形区域
+\begin{equation}
+    \Omega'=\{(u,v): |u|+|v|\leqslant \pi\}.
+\end{equation}
+
+代入式(\ref{eq:I_half_angle})，并利用 $\di x\,\di y=\frac{1}{2}\di u\,\di v$ 以及前面的系数4：
+\begin{equation}
+    I(m,n;1)=2\iint_{\Omega'}
+    \frac{1-\cos(m(u+v))\cos(n(u-v))}
+    {\sin u\,\sin v}
+    \,\di u\,\di v.
+    \label{eq:I_uv}
+\end{equation}
+
+\subsection{分子展开与对称性化简}
+
+利用积化和差公式展开分子：
+\begin{align}
+    &\cos(m(u+v))\cos(n(u-v)) \nonumber\\
+    &=\frac{1}{2}\left[\cos((m+n)u+(m-n)v)+\cos((m-n)u+(m+n)v)\right].
+    \label{eq:cos_product_expand}
+\end{align}
+
+记 $a=m+n,\ b=m-n$。式(\ref{eq:I_uv})变为
+\begin{align}
+    I(m,n;1)&=2\iint_{\Omega'}\frac{1}{\sin u\sin v}\,\di u\,\di v \nonumber\\
+    &\quad -\iint_{\Omega'}\frac{\cos(au+bv)+\cos(bu+av)}{\sin u\sin v}\,\di u\,\di v.
+    \label{eq:I_split}
+\end{align}
+
+第一项中，被积函数 $1/(\sin u\sin v)$ 关于 $u$ 和 $v$ 均为奇函数，而积分区域 $\Omega'$ 关于 $u=0$ 和 $v=0$ 对称，因此其主值积分为零：
+\begin{equation}
+    \iint_{\Omega'}\frac{1}{\sin u\sin v}\,\di u\,\di v=0.
+    \label{eq:const_term_zero}
+\end{equation}
+
+于是只剩下
+\begin{equation}
+    I(m,n;1)=-\iint_{\Omega'}\frac{\cos(au+bv)+\cos(bu+av)}{\sin u\sin v}\,\di u\,\di v.
+    \label{eq:I_cos_only}
+\end{equation}
+
+由对称性，两项贡献相同（交换 $a,b$ 对应积分区域的对称变换），因此
+\begin{equation}
+    I(m,n;1)=-2\iint_{\Omega'}\frac{\cos(au+bv)}{\sin u\sin v}\,\di u\,\di v.
+    \label{eq:I_single_cos}
+\end{equation}
+
+\subsection{余弦展开与矩形化}
+
+利用恒等式
+\begin{equation}
+    \cos(au+bv)=\cos(au)\cos(bv)-\sin(au)\sin(bv),
+    \label{eq:cos_sum_expand}
+\end{equation}
+式(\ref{eq:I_single_cos})分为两项：
+\begin{align}
+    I(m,n;1)
+    &=-2\iint_{\Omega'}\frac{\cos(au)\cos(bv)}{\sin u\sin v}\,\di u\,\di v \nonumber\\
+    &\quad +2\iint_{\Omega'}\frac{\sin(au)\sin(bv)}{\sin u\sin v}\,\di u\,\di v.
+    \label{eq:I_two_terms}
+\end{align}
+
+第一项中，$\cos(au)/\sin u$ 是奇函数（分子偶、分母奇），$\cos(bv)/\sin v$ 也是奇函数，乘积为偶函数，在菱形区域上积分不一定为零。但观察发现：若将积分区域从菱形 $\Omega'$ 延拓到矩形 $[-\pi,\pi]^2$，由于被积函数在 $\Omega'$ 外的部分关于原点反对称，主值意义下可等价为矩形积分的一半。这一步骤需谨慎处理，但最终可证明（见附录B）：
+\begin{equation}
+    \iint_{\Omega'}\frac{\cos(au)\cos(bv)}{\sin u\sin v}\,\di u\,\di v=0.
+    \label{eq:cos_cos_term_zero}
+\end{equation}
+对于固定的 $u$，内层积分为
+\begin{equation}
+    \int_{-(\pi-|u|)}^{\pi-|u|} \frac{\cos(bv)}{\sin v}\,\di v = 0,
+\end{equation}
+因为被积函数 $\cos(bv)/\sin v$ 是 $v$ 的奇函数，而积分区间关于原点对称。因此整个二重积分为零。
+因此只剩第二项：
+\begin{equation}
+    I(m,n;1)=2\iint_{\Omega'}\frac{\sin(au)\sin(bv)}{\sin u\sin v}\,\di u\,\di v.
+    \label{eq:I_sin_sin}
+\end{equation}
+
+\subsection{区域延拓与分离变量}
+
+由于被积函数 $\dfrac{\sin(au)}{\sin u}\cdot\dfrac{\sin(bv)}{\sin v}$ 在 $\Omega'$ 上可分离变量，且关于 $u,v$ 均为偶函数，可将积分从菱形延拓到矩形 $[-\pi,\pi]^2$，并乘以因子 $1/2$（因为 $\Omega'$ 是矩形的一半面积，且被积函数偶对称）：
+\begin{equation}
+    I(m,n;1)=2\cdot\frac{1}{2}
+    \int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u
+    \int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v
+    =
+    \left(\int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u\right)
+    \left(\int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v\right).
+    \label{eq:I_separated}
+\end{equation}
+
+这里 $a=m+n,\ b=m-n$。
+
+
+
+
+\subsection{一维积分的计算与符号确定}
+
+对于任意整数 $K$，标准积分（主值意义下）为
+\begin{equation}
+    \int_{-\pi}^{\pi}\frac{\sin(K\theta)}{\sin\theta}\,\di\theta
+    =
+    \begin{cases}
+        2\pi\,\sgn(K), & K\ \text{为奇数},\\
+        0, & K\ \text{为偶数}.
+    \end{cases}
+    \label{eq:1D_integral}
+\end{equation}
+
+因此：
+\begin{equation}
+    \int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u
+    =
+    \begin{cases}
+        2\pi\,\sgn(a), & m+n\ \text{为奇数},\\
+        0, & m+n\ \text{为偶数}.
+    \end{cases}
+\end{equation}
+同理，
+\begin{equation}
+    \int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v
+    =
+    \begin{cases}
+        2\pi\,\sgn(b), & m-n\ \text{为奇数},\\
+        0, & m-n\ \text{为偶数}.
+    \end{cases}
+\end{equation}
+
+两个积分均非零当且仅当 $m+n$ 和 $m-n$ 均为奇数，即 $m$ 与 $n$ 一奇一偶且 $m\neq n$。由式(\ref{eq:I_separated})，
+\begin{equation}
+    I(m,n;1)=
+    \left(\int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u\right)
+    \left(\int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v\right)
+    = 4\pi^2\,\sgn(m+n)\sgn(m-n).
+    \label{eq:I_sgn}
+\end{equation}
+
+因此，
 \begin{equation}
     \boxed{
     I(m,n;1) =
-    \begin{cases}
-        -8\pi^2, & m < n \ \text{且}\ m,n \ \text{一奇一偶},\\
+    \begin{dcases}
+        4\pi^2\,\sgn(m-n)\,\sgn(m+n), & m\not\equiv n \, (\mathrm{mod} 2),\\
         0, & \text{其他情况}.
-    \end{cases}
+    \end{dcases}
     }
-    \label{eq:theorem_alpha_eq_1}
+    \label{eq:final_result}
 \end{equation}
 
-\subsection{$\alpha > 1$ 的讨论}
+\subsection{阻抗表达式}
 
-当 $\alpha > 1$ 时，$B \in [-1, 2\alpha-1]$，积分域分裂为：
-\begin{itemize}
-    \item 主值区 $(|B| \le 1)$：$|\cos k_1| \ge 1 - 2/\alpha$；
-    \item 正则区 $(B > 1)$：$|\cos k_1| < 1 - 2/\alpha$。
-\end{itemize}
-
-对于 $n=0$ 的特殊情况，$J_0(B)$ 在主值区为零，在正则区为正。被积函数 $2J_0(B)(1-\cos(mk_1)) \ge 0$ 且不恒为零，因此
+将式(\ref{eq:final_result})代入式(\ref{eq:Z_I_relation})，在临界频率 $\omega_0=\dfrac{1}{\sqrt{LC}}$ 处：
 \begin{equation}
-    \forall \alpha > 1, \forall m > 0: I(m,0;\alpha) > 0.
-    \label{eq:theorem_alpha_greater_1_n0}
+    \boxed{
+    \tilde Z(\omega_0) =
+    \begin{dcases}
+         -\ii\sqrt{\dfrac{L}{C}}\,\sgn(m-n)\,\sgn(m+n),
+        & m\not\equiv n \, (\mathrm{mod} 2),\\[6pt]
+        0, & \text{其他情况}.
+    \end{dcases}
+    }
+    \label{eq:Z_final}
 \end{equation}
-对于一般 $m,n > 0$，阻抗行为更为复杂，$m\ge n$ 时通常保号无零点，$m<n$ 时可能因两区贡献干涉而产生零点。这些细节可通过数值计算进一步研究。
+
+下面是计算机进行Cauchy主值积分数值验证的结果，如图\ref{fig:Chauchy}所示，数值结果与理论解析结果完全吻合。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{Cauchy主值积分.png}
+  \caption{临界频率下阻抗的数值验证}
+  \label{fig:Chauchy}
+\end{figure}
 
 
 
 
+\subsection{其他频率的讨论}
 
-
-
-\section{数值实验与讨论}
-
-根据上节的严格理论，$\tilde Z(\omega)$ 的行为可以精确刻画。
-
-\begin{enumerate}
-    \item 当 $\alpha = \omega^2 LC < 1$（即 $\omega < 1/\sqrt{LC}$）时：
-    \begin{itemize}
-        \item 若 $m \ge n$，则 $I(m,n;\alpha) \equiv 0$，因此 $\tilde Z(\omega) \equiv 0$。
-        \item 若 $m < n$，则 $I(m,n;\alpha)$ 是 $\alpha$ 的多项式，阻抗为纯虚数，且在该区间内无零点。
-    \end{itemize}
-    
-    \item 当 $\alpha = 1$（即 $\omega = 1/\sqrt{LC}$）时：
-    \begin{itemize}
-        \item 若 $m < n$ 且 $m,n$ 一奇一偶，则 $I(m,n;1) = -8\pi^2$，阻抗为
-        \begin{equation}
-            \tilde Z = \frac{-\ii\omega L}{4\pi^2}(-8\pi^2) = 2\ii\omega L = 2\ii\sqrt{\frac{L}{C}}.
-        \end{equation}
-        \item 其他情况，阻抗为零。
-    \end{itemize}
-    
-    \item 当 $\alpha > 1$（即 $\omega > 1/\sqrt{LC}$）时，阻抗一般不为零，且其行为取决于 $m,n$ 的具体值。
-\end{enumerate}
-
+对于 $\alpha \neq 1$ 的一般情况，积分(\ref{eq:I_mn_definition})的解析处理更为复杂，需引入椭圆积分或数值方法，本文不再赘述。
 
 
 \section{结论}
