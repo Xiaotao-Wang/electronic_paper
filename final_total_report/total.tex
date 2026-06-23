@@ -84,10 +84,10 @@
 \maketitle
 
 \begin{abstract}
-  本文针对二维网格纯电阻和一维CL拓扑电路在谐振下的行为，前者使用离散Fourier变换方法，将基尔霍
+  本文针对二维网格纯电阻和一维$LC$拓扑电路在谐振下的行为，前者使用离散Fourier变换方法，将基尔霍
   夫定律转化为频域代数方程。推导出任意两点间等效电阻的积分表达式，并进一步通过留数定理和级数展开，
   得到了适用于数值计算的级数求和公式
-  研究了二维无穷CL网格中的电学性质，尤其对$\omega^2LC = 1$下的特殊阻抗行为进行了分析计算。
+  研究了二维无穷$LC$网格中的电学性质，尤其对$\omega^2LC = 1$下的特殊阻抗行为进行了分析计算。
   系统分析了两种二维无穷网格电路的输运性质。本文的推导过程完整、严谨，可为相关领域的理论分析
   和教学参考提供有益借鉴。
 \end{abstract}
@@ -196,6 +196,7 @@ we investigate transport in two-dimensional infinite
 \end{equation}
 则KCL方程可写为
 \begin{equation}
+  \label{111}
   V(x,y)-\mathscr{L}V(x,y)=\dfrac{r}{4}I(x,y).
 \end{equation}
 
@@ -231,13 +232,13 @@ we investigate transport in two-dimensional infinite
   =F(\omega_1,\omega_2)\dfrac{\cos\omega_1+\cos\omega_2}{2}.
 \end{equation}
 
-将方程(4)两端作Fourier逆变换，得到频域电势
+将方程(\ref{111})两端作Fourier逆变换，得到频域电势
 \begin{equation}
   F(\omega_1,\omega_2)=\dfrac{Ir}{2}\,
   \frac{1-\e{\ii(m\omega_1+n\omega_2)}}{2-(\cos\omega_1+\cos\omega_2)}.
 \end{equation}
 
-于是电势的实空间表达式为
+于是电势表达式为
 \begin{align}
   V(x,y)&=\dfrac{Ir}{8\pi^2}
   \iint_{\Omega}\frac{\left[1-\e{\ii(m\omega_1+n\omega_2)}\right]
@@ -266,8 +267,8 @@ we investigate transport in two-dimensional infinite
 
 \subsection{积分向级数的转化}
 
-积分式(\ref{eq:R_integral})虽形式简洁，但直接数值计算二维奇异积分较为不便。
-下面将其化为快速收敛的级数形式。
+积分式(\ref{eq:R_integral})虽形式简洁，但直接数值计算二维积分较为不便。
+下面将其化为级数形式。
 
 记
 \begin{equation}
@@ -351,18 +352,18 @@ we investigate transport in two-dimensional infinite
 \end{equation}
 
 公式(\ref{eq:R_series})收敛迅速，适合数值计算。取平凡情况验证：当$m=n=0$时，$R_{00}=0$；
-对于$m,n$较大时，级数项以$2^{-4k}$衰减（见图\ref*{fig:R_mn}和图\ref*{fig:zzl}）。
+对于$m,n$较大时，级数项以$2^{-4k}$衰减（见图\ref{fig:R_mn}和图\ref{fig:zzl}）。
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{m的渐进行为.png}
+  \includegraphics[width=0.6\textwidth]{m的渐进行为.png}
   \caption{纯电阻网格积分值$I(m,n)$固定$n$随$m$的变化}
   \label{fig:R_mn}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{增长率分析.png}
+  \includegraphics[width=0.6\textwidth]{增长率分析.png}
   \caption{固定$n$增长率随$m$的变化}
   \label{fig:zzl}
 \end{figure}
@@ -564,8 +565,6 @@ we investigate transport in two-dimensional infinite
   \lambda_{\pm}=-\dfrac{C_1}{2C_2}\pm\sqrt{\left(\dfrac{C_1}{2C_2}\right)^2-1}
 \end{equation}
 
-\newpage
-
 \begin{enumerate}
   \item 若$C_1>2C_2$，则$\lambda_{\pm}$为实数，系统呈现振荡行为。
   
@@ -622,7 +621,7 @@ we investigate transport in two-dimensional infinite
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{dyz.png}
+    \includegraphics[width=0.6\textwidth]{dyz.png}
     \caption{$C_1=2C_2$时电压的变化情况}
     
   \end{figure}
@@ -647,7 +646,7 @@ we investigate transport in two-dimensional infinite
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{zd3.png}
+  \includegraphics[width=0.6\textwidth]{zd3.png}
   \caption{$C_1<2C_2$时电压的变化情况}
 \end{figure}
   \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵变为
