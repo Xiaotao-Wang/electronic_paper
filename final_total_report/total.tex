@@ -45,11 +45,11 @@
   bottom=2.5cm,
 }
 % 行距
-\setstretch{1.3}
+\setstretch{1.5}
 % 标题格式
-\title{\huge \bfseries 网格电阻与阻抗的Fourier分析}
+\title{\LARGE \bfseries 离散Fourier变换下网格电路的阻抗奇异性与拓扑输运}
 \author{
-  朱克拉$^{1}$，\quad 王思晗$^{1}$ \\
+  PB25050895\ 朱克拉$^{1}$，\quad PB25050892\ 王思晗$^{1}$ \\
   \small (1.中国科学技术大学工程科学学院，合肥)
 }
 \date{}
@@ -65,6 +65,19 @@
 % 图表标题格式
 \captionsetup[figure]{labelformat=default, labelsep=quad, font=small}
 \captionsetup[table]{labelformat=default, labelsep=quad, font=small}
+% 英文摘要
+\newenvironment{abstract_en}{%
+  \small
+  \textbf{Abstract:}%
+}{%
+  \par
+}
+% 英文关键词
+\newenvironment{keyword_en}{\small
+  \textbf{Keywords:}  
+}{}
+
+
 
 \begin{document}
 
@@ -82,6 +95,32 @@
 \begin{keyword}
   离散Fourier变换；网格电阻；SSH电路；阻抗积分；$LC$网络
 \end{keyword}
+
+\vspace*{1em}
+
+\begin{abstract_en}
+Using discrete Fourier transform as a unified tool, 
+we investigate transport in two-dimensional infinite
+ grid circuits. For resistive networks, we derive an 
+ integral expression for the equivalent resistance and
+  convert it to a rapidly convergent series via residue
+   calculus. For $LC$ networks at the critical frequency
+    $\omega^2 LC = 1$, we find that the impedance vanishes
+     when the two nodes have the same parity, and becomes a 
+     constant purely imaginary value otherwise, revealing an
+      alternating pattern of perfect transmission and complete
+       blockade. All analytical results are confirmed by numeric
+       al Cauchy principal value integrations.
+\end{abstract_en}
+
+\begin{keyword_en}
+  discrete Fourier transform; grid resistance; SSH circuit; impedance integration; $LC$ network
+\end{keyword_en}
+
+
+\vspace*{1em}
+
+
 
 \section{引言}
 
@@ -101,7 +140,7 @@
 
 \section{纯电阻网格的Fourier分析}
 
-\subsection{问题设定与基尔霍夫方程}
+\subsection{问题背景与基尔霍夫方程}
 
 \begin{figure}[H]
   \centering
@@ -150,7 +189,7 @@
         +\frac{1}{r}\left[V(x,y)-V(x,y+1)\right].
 \end{align}
 
-定义离散拉普拉斯算子
+定义离散拉普拉斯算子\textsuperscript{\cite{shu2014}}
 \begin{equation}
   \mathscr{L}V(x,y)=\frac{1}{4}\left[V(x-1,y)+V(x+1,y)
   +V(x,y-1)+V(x,y+1)\right],
@@ -165,9 +204,9 @@
   R(m,n)=\dfrac{1}{I}\left[V(0,0)-V(m,n)\right].
 \end{equation}
 
-\subsection{Fourier变换与频域求解}
+\subsection{Fourier变换至频域求解}
 
-引入二维离散Fourier变换对
+引入二维离散Fourier变换对\textsuperscript{\cite{cserti2000}}
 \begin{equation}
   F(\omega_1,\omega_2)=\fo{V(x,y)}
   =\sum_{x=-\infty}^{\infty}\sum_{y=-\infty}^{\infty}V(x,y)\e{\ii(x\omega_1+y\omega_2)},
@@ -330,9 +369,9 @@
 
 \section{一维二聚化$LC$传输线}
 
-\subsection{一维二聚化 $LC$ 传输线模型}
+\subsection{问题背景}
 \label{subsec:lc_line}
-本节研究如图\ref{fig:4}所示的一维二聚化 $LC$ 传输线。该系统由周期性晶胞组成，每个晶胞内包含 $A, B$ 两个子格点。胞内和胞间分别通过电容 $C_1$ 和 $C_2$ 耦合，格点均有对地电感 $L$。
+本节研究如图\ref{fig:4}所示的一维二聚化 $LC$ 传输线\textsuperscript{\cite{english2026}}。该系统由周期性晶胞组成，每个晶胞内包含 $A, B$ 两个子格点。胞内和胞间分别通过电容 $C_1$ 和 $C_2$ 耦合，格点均有对地电感 $L$。
 
 
 \begin{figure}[H]
@@ -411,7 +450,7 @@
         \draw (1,-4) node[ground]{};
 
     \end{circuitikz}
-    \caption{耦合阵列电路图}
+    \caption{$LC$耦合阵列电路图}
     \label{fig:4}
 \end{figure}
 
@@ -458,12 +497,12 @@
   \end{bmatrix}
   \end{equation}
 
-  对于$A$而言，
+  对于$A$类节点而言，
   \begin{equation}
     V_A^n = \left(-\dfrac{C_1}{C_2}\right)^n V_A^0.
   \end{equation}
 
-  对于$n=N$，由于阵列有限长，末端电压需要用额外方程确定方程(\ref{eq27})改写为
+  对于$n=N$，由于阵列有限长，末端电压需要用额外方程确定方程(\ref{eq27})改写为 
   \begin{equation}
     \label{eq33}
     \begin{dcases}
@@ -525,6 +564,8 @@
   \lambda_{\pm}=-\dfrac{C_1}{2C_2}\pm\sqrt{\left(\dfrac{C_1}{2C_2}\right)^2-1}
 \end{equation}
 
+\newpage
+
 \begin{enumerate}
   \item 若$C_1>2C_2$，则$\lambda_{\pm}$为实数，系统呈现振荡行为。
   
@@ -581,7 +622,7 @@
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{dyz.png}
+    \includegraphics[width=0.5\textwidth]{dyz.png}
     \caption{$C_1=2C_2$时电压的变化情况}
     
   \end{figure}
@@ -606,7 +647,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{zd3.png}
+  \includegraphics[width=0.5\textwidth]{zd3.png}
   \caption{$C_1<2C_2$时电压的变化情况}
 \end{figure}
   \item 当$\omega=\dfrac{1}{\sqrt{LC_2}}$时，传输矩阵变为
@@ -635,7 +676,7 @@
 \end{enumerate}
 
 
-
+\setstretch{1.5}
 
 \section{$LC$网格在临界频率的阻抗}
 
@@ -684,7 +725,8 @@
 
 \subsection{临界频率 $\alpha=1$ 的积分化简}
 
-当 $\alpha = \omega^2 LC = 1$，即 $\omega = \dfrac{1}{\sqrt{LC}}$ 时，分母为
+
+当 $\alpha = \omega^2 LC = 1$，即 $\omega = \dfrac{1}{\sqrt{LC}}$ 时，分母化为
 \begin{equation}
     \sin^2\dfrac{k_1}{2}-\sin^2\dfrac{k_2}{2}.
 \end{equation}
@@ -805,6 +847,8 @@
 
 \subsection{区域延拓与分离变量}
 
+\setstretch{1.5}
+
 由于被积函数 $\dfrac{\sin(au)}{\sin u}\cdot\dfrac{\sin(bv)}{\sin v}$ 在 $\Omega'$ 上可分离变量，且关于 $u,v$ 均为偶函数，可将积分从菱形延拓到矩形 $[-\pi,\pi]^2$，并乘以因子 $1/2$（因为 $\Omega'$ 是矩形的一半面积，且被积函数偶对称）：
 \begin{equation}
     I(m,n;1)=2\cdot\frac{1}{2}
@@ -902,52 +946,78 @@
 
 \subsection{其他频率的讨论}
 
-对于 $\alpha \neq 1$ 的一般情况，积分(\ref{eq:I_mn_definition})的解析处理更为复杂，需引入椭圆积分或数值方法，本文不再赘述。
+对于 $\alpha \neq 1$ 的一般情况，积分(\ref{eq:I_mn_definition})的解析处理更为复杂，需引入椭圆积分或留数定理等数值方法，
+对$m,n$在不同区域的讨论过于困难。限于笔者的数学能力，难以进行更进一步的推导。
 
 
 \section{结论}
 
-本文运用离散Fourier变换系统研究了两类二维无穷网格电路的输运性质，主要成果如下：
+本文采用离散Fourier变换作为统一的分析工具，系统研究了两类具有平移对称性的
+二维无穷网格电路的输运性质，分别针对纯电阻网络和电感-电容（$LC$）网络建立了从
+基尔霍夫定律到等效响应函数的完整理论框架。主要结论如下：
 
 \begin{enumerate}
-  \item 对于纯电阻网格，从基尔霍夫定律出发，通过Fourier变换获得电势的频域解，
-        进而导出等效电阻的双重积分表达式。进一步借助变量替换和留数技巧，
-        将积分化为快速收敛的双重级数（式(\ref{eq:R_series})），
-        避免了二维奇异积分的直接计算。
-  \item 对于$LC$网格，建立了频域阻抗积分模型。通过引入二维晶格格林函数 $I(m,n;\alpha)$ 并利用留数定理对内层积分进行严格解析，首次给出了该积分在所有 $\alpha$ 区间的完整解析行为。核心结论包括：
-        \begin{itemize}
-            \item 当 $\alpha < 1$ 且 $m \ge n$ 时，$I(m,n;\alpha) \equiv 0$，揭示了阻抗的严格零区间；
-            \item 在临界点 $\alpha=1$，给出了 $I(m,n;1)$ 的精确表达式，修正了文献中关于特定 $\alpha$ 处“零点”的错误论断；
-            \item 对于 $\alpha > 1$，给出了定性行为描述。
-        \end{itemize}
-  \item 两种问题的对比表明，Fourier变换是处理离散平移对称系统的一般性方法，
-        而后续的积分化简策略（级数展开或留数降维）则依赖于具体算子的类型
-        （椭圆型或双曲型）。
+    \item \textbf{纯电阻网格的等效电阻}：通过将实空间的差分方程变换至频域，
+    获得了电势的闭合积分解，进而导出任意两点间等效电阻的二维积分表达式
+    (\ref{eq:R_integral})。为进一步克服二维奇异积分在数值计算中的不便，
+    本文利用变量代换与留数定理，将积分精确转化为快速收敛的双重级数(\ref{eq:R_series})
+    。该级数各项以 $2^{-4k}$ 的速率衰减，显著提升了计算效率，且退化为平凡情形
+    （$m=n=0$）时自动给出 $R_{00}=0$，验证了公式的自洽性。
+
+    \item \textbf{一维二聚化$LC$传输线的谐振行为}：针对胞内、胞间电容非对称
+    的二聚化$LC$链，建立了节点电压的转移矩阵方程，系统分析了三种特征频率下的
+    谐振模式。特别地，当 $\omega = \dfrac{1}{\sqrt{L(C_1+C_2)}}$ 时，$A$、$B$ 两子
+    格完全退耦合，$B$ 子格电压可独立置零而不影响 $A$ 子格的电压分布，呈现选择
+    性接地效应；当 $\omega = \dfrac{1}{\sqrt{LC_1}}$ 时，系统展现出依赖电容比 $C_1/C_2$
+     的丰富相行为，包括实根振荡（$C_1>2C_2$）、临界衰减（$C_1=2C_2$）以及复根衰
+     减振荡（$C_1<2C_2$），并给出了各情形下电压分布的闭合解析表达式。
+
+    \item \textbf{二维$LC$网格在临界频率的特殊阻抗行为}：对于横向电容、
+    纵向电感构成的二维$LC$网格，推导了任意两点间阻抗的频域积分表达
+    式(\ref{eq:Z_integral_2D})。在临界频率
+     $\omega_0 = \dfrac{1}{\sqrt{LC}}$（即 $\alpha=1$）处，
+     通过半角变换将二维积分化为菱形区域上的可分离变量积分，并利用区域对称性求得：
+    \[
+    \tilde Z(\omega_0) =
+    \begin{dcases}
+        -\ii\sqrt{\dfrac{L}{C}}\,\sgn(m-n)\,\sgn(m+n),
+        & m \not\equiv n \pmod{2},\\[6pt]
+        0, & \text{其他情况}.
+    \end{dcases}
+    \]
+    该结果表明：当且仅当两节点横纵坐标奇偶性相异时，
+    阻抗为纯虚数；当奇偶性相同时，
+    阻抗严格为零。这一发现揭示了临界频率下网格中非局域
+    的完全透射与完全阻断交替出现的奇特拓扑输运现象。
+    数值计算的Cauchy主值积分（图\ref{fig:Chauchy}）
+    与解析结果完全一致，验证了推导的正确性。
+
+    \item \textbf{方法论的普适性}：纯电阻网格的椭圆型算子与$LC$网格的双曲型算子虽物理本质迥异，但Fourier变换均能将其统一处理为频域代数方程。差异仅在于后续积分的化简策略——电阻问题依赖级数展开，而$LC$临界问题则可通过变量替换实现分离变量精确求解。这一对比表明，离散Fourier变换是处理离散平移对称系统的一般性方法，而具体积分技巧则需根据算子类型灵活选择。
 \end{enumerate}
 
-本文的推导过程完整、自洽，所有中间步骤均有详细交代，既适合作为电动力学或
-数学物理方法课程的教学补充材料，也可为相关工程计算提供理论参考。
+综上所述，本文为二维无穷网格电路提供了一套从积分解到可计算级数或闭合表达式的完整理论方案，所有结果均经过自洽性检验与数值验证。研究不仅丰富了离散格林函数在电路理论中的应用，也为拓扑电路、超材料传输线等领域的进一步探索提供了可扩展的数学工具。
 
-\section*{参考文献}
 
-[1] 舒幼生，胡望雨，陈秉乾. 物理学难题集萃. 上册[M]. 中国科学技术大学出版社，
-2014: 611-616.
+\begin{thebibliography}{99}
 
-% [2] Einstein A. Zur Elektrodynamik bewegter Körper[J]. Annalen der Physik,
-% 1905, 17: 891-921.
+\bibitem{shu2014}
+舒幼生，胡望雨，陈秉乾.
+物理学难题集萃. 上册[M].
+合肥：中国科学技术大学出版社，2014: 611-616.
 
-% [3] 张三，李四. 量子纠缠的物理教学探讨[J]. 物理通报，2023, (5): 45-49.
+\bibitem{cserti2000}
+Cserti J.
+Application of the lattice Green's function for calculating the resistance of an infinite network of resistors[J].
+\textit{American Journal of Physics}, 2000, 68(10): 896-906.
 
-% [4] Cserti J. Application of the lattice Green's function for calculating
-% the resistance of an infinite network of resistors[J]. American Journal of
-% Physics, 2000, 68(10): 896-906.
+\bibitem{english2026}
+English L~Q, Halchenko A, Palmero F.
+Topologically protected spatially localized modes: An easy experimental realization of the Su–Schrieffer–Heeger model[J].
+\textit{Physica B: Condensed Matter}, 2026, 734: 418616.
 
-% [5] Asatryan A A, et al. Two-dimensional LC networks: anomalous transmission
-% and reflection[J]. Physical Review E, 2001, 63(5): 056612.
+\end{thebibliography}
 
-% [6] Gradshteyn I S, Ryzhik I M. Table of Integrals, Series, and Products[M]. 7th ed. Academic Press, 2007.
 
-% [7] Olver F W J, et al. NIST Handbook of Mathematical Functions[M]. Cambridge University Press, 2010.
 
 % ==================== 附录 ====================
 \clearpage
