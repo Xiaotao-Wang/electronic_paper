@@ -276,12 +276,12 @@
 
 定义辅助积分
 \begin{equation}
-  J(a)=\frac{1}{2}\int_{-\pi}^{\pi}\cos(au)\cos^k u\,\di u.
+  J(a)=\dfrac{1}{2}\int_{-\pi}^{\pi}\cos(au)\cos^k u\,\di u.
 \end{equation}
 
 令$z=\e{\ii u}$，则$\di u=\di z/(\ii z)$，留数计算(计算过程见附录\ref{A})可得
 \begin{align}
-  J(a)&=\frac{\pi}{2^k}\,
+  J(a)&=\dfrac{\pi}{2^k}\,
   \frac{k!}{\left(\frac{k+a}{2}\right)!\left(\frac{k-a}{2}\right)!},
   \quad |a|\leqslant k,\ k\equiv a\pmod 2,
 \end{align}
@@ -291,8 +291,8 @@
 \begin{equation}
   J(b)=
   \begin{dcases}
-    \frac{\pi}{2^k}\,
-    \frac{k!}{\left(\frac{k+b}{2}\right)!\left(\frac{k-b}{2}\right)!},
+    \dfrac{\pi}{2^k}\,
+    \dfrac{k!}{\left(\frac{k+b}{2}\right)!\left(\frac{k-b}{2}\right)!},
     & |b|\leqslant k,\ k\equiv b\pmod 2,\\
     0, & \text{其他}.
   \end{dcases}
@@ -301,8 +301,8 @@
 非零贡献要求$a,b$同奇偶，且$|a|\geqslant |b|$。令$k=a+2p$（$p=0,1,2,\dots$），
 可得
 \begin{equation}
-  I_2=\frac{2\pi^2}{2^{2(m+n)}}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
-  \frac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}
+  I_2=\dfrac{2\pi^2}{2^{2(m+n)}}\sum_{k=0}^{\infty}\frac{1}{2^{4k}}
+  \dfrac{(m+n+2k)!}{k!(m+k)!(n+k)!(m+n+k)!}
 \end{equation}
 
 最终，等效电阻的级数公式为
@@ -311,8 +311,8 @@
   R_{mn}=\dfrac{r}{2}\sum_{k=0}^{\infty}\dfrac{1}{2^{4k}}\left[\left(\dfrac{(2k)!}{k!k!}\right)^2-\dfrac{(m+n+2k)!^2}{2^{2(m+n)}k!(m+k)!(n+k)!(m+n+k)!}\right]
 \end{equation}
 
-公式(\ref{eq:R_series})收敛迅速，适合数值计算。当$m=n=0$时，$R_{00}=0$；
-对于$m,n$较大时，级数项以$2^{-4k}$衰减。
+公式(\ref{eq:R_series})收敛迅速，适合数值计算。取平凡情况验证：当$m=n=0$时，$R_{00}=0$；
+对于$m,n$较大时，级数项以$2^{-4k}$衰减（见图\ref*{fig:R_mn}和图\ref*{fig:zzl}）。
 
 \begin{figure}[H]
   \centering
@@ -329,6 +329,12 @@
 \end{figure}
 
 \section{一维二聚化$LC$传输线}
+
+\subsection{一维二聚化 $LC$ 传输线模型}
+\label{subsec:lc_line}
+本节研究如图\ref{fig:4}所示的一维二聚化 $LC$ 传输线。该系统由周期性晶胞组成，每个晶胞内包含 $A, B$ 两个子格点。胞内和胞间分别通过电容 $C_1$ 和 $C_2$ 耦合，格点均有对地电感 $L$。
+
+
 \begin{figure}[H]
     \centering
     \begin{circuitikz}[
@@ -433,10 +439,10 @@
 
 \begin{equation}
   V[n]=\begin{bmatrix}
--\frac{C_1}{C_2} & 
-\frac{1}{C_2} \left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right] \\
--\frac{1}{C_2} \left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right] & 
-- \frac{C_2}{C_1}+\frac{1}{C_1 C_2}\left[(C_1 + C_2) - \frac{1}{\omega^2 L} \right]^2 
+-\dfrac{C_1}{C_2} & 
+\dfrac{1}{C_2} \left[(C_1 + C_2) - \dfrac{1}{\omega^2 L} \right] \\
+-\dfrac{1}{C_2} \left[(C_1 + C_2) - \dfrac{1}{\omega^2 L} \right] & 
+- \dfrac{C_2}{C_1}+\dfrac{1}{C_1 C_2}\left[(C_1 + C_2) - \dfrac{1}{\omega^2 L} \right]^2 
 
   \end{bmatrix}V[n-1]
 \end{equation}
@@ -476,11 +482,11 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{电压值.png}
-  \caption{谐振时电压的变化情况}
+  \includegraphics[width=0.9\textwidth]{电压值.png}
+  \caption{谐振时电压随节点的变化情况}
 \end{figure}
 
-如果此时规定$V_B^N=0$，则$V_B^n=0$，即所有$B$节点电压为0，而$A$节点的电压保持不变。
+如果此时规定$V_B^N=0$，则所有的$V_B^n=0$，即所有$B$节点电压为0，而$A$节点的电压保持不变。
 
 此外在该电路任意$B$节点控制电压，$A$节点电压完全不受影响，即$A$，$B$完全解耦合。
 
@@ -670,7 +676,7 @@
     \,\di k_2\,\di k_1,
     \label{eq:I_mn_definition}
 \end{equation}
-其中 $\alpha \equiv \omega^2 LC$。则
+其中定义宗量 $\alpha \equiv \omega^2 LC$。则
 \begin{equation}
     \tilde Z(\omega) = \frac{-\ii\omega L}{4\pi^2} I(m,n;\alpha).
     \label{eq:Z_I_relation}
