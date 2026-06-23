@@ -640,8 +640,8 @@
 根据KCL，推导可得频域电势
 \begin{equation}
   \tilde V(k_1,k_2)=
-  \frac{\omega L I\left(1-\e{\ii(mk_1+nk_2)}\right)}
-  {4\ii\left(\omega^2 LC\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}\right)}.
+  \dfrac{\omega L I\left[1-\e{\ii(mk_1+nk_2)}\right]}
+  {4\ii\left(\omega^2 LC\sin^2\dfrac{k_1}{2}-\sin^2\dfrac{k_2}{2}\right)}.
 \label{eq:LC_V_freq}
 \end{equation}
 
@@ -656,7 +656,7 @@
   \frac{-\ii\omega L}{4\pi^2}
   \int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
   \frac{1-\cos(mk_1)\cos(nk_2)}
-  {\omega^2 LC\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}}
+  {\omega^2 LC\sin^2\dfrac{k_1}{2}-\sin^2\dfrac{k_2}{2}}
   \,\di k_1\di k_2.
 \label{eq:Z_integral_2D}
 \end{equation}
@@ -666,7 +666,7 @@
     I(m,n;\alpha) \equiv
     \int_{-\pi}^{\pi}\int_{-\pi}^{\pi}
     \frac{1-\cos(mk_1)\cos(nk_2)}
-    {\alpha\sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}}
+    {\alpha\sin^2\dfrac{k_1}{2}-\sin^2\dfrac{k_2}{2}}
     \,\di k_2\,\di k_1,
     \label{eq:I_mn_definition}
 \end{equation}
@@ -678,19 +678,19 @@
 
 \subsection{临界频率 $\alpha=1$ 的积分化简}
 
-当 $\alpha = \omega^2 LC = 1$，即 $\omega = 1/\sqrt{LC}$ 时，分母为
+当 $\alpha = \omega^2 LC = 1$，即 $\omega = \dfrac{1}{\sqrt{LC}}$ 时，分母为
 \begin{equation}
-    \sin^2\frac{k_1}{2}-\sin^2\frac{k_2}{2}.
+    \sin^2\dfrac{k_1}{2}-\sin^2\dfrac{k_2}{2}.
 \end{equation}
 
 作半角换元简化三角函数。令
 \begin{equation}
-    x=\frac{k_1}{2},\qquad y=\frac{k_2}{2},
+    x=\dfrac{k_1}{2},\qquad y=\dfrac{k_2}{2},
 \end{equation}
-则 $\di k_1=2\di x,\ \di k_2=2\di y$，积分区域变为 $[-\pi/2,\pi/2]^2$。于是
+则 $\di k_1=2\di x,\ \di k_2=2\di y$，积分区域变为 $\left[-\dfrac{\pi}{2},\dfrac{\pi}{2}\right]^2$。于是
 \begin{equation}
-    I(m,n;1)=4\int_{-\pi/2}^{\pi/2}\int_{-\pi/2}^{\pi/2}
-    \frac{1-\cos(2mx)\cos(2ny)}
+    I(m,n;1)=4\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}}\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}}
+    \dfrac{1-\cos(2mx)\cos(2ny)}
     {\sin^2 x-\sin^2 y}
     \,\di y\,\di x.
     \label{eq:I_half_angle}
@@ -718,19 +718,19 @@
 \end{equation}
 则
 \begin{equation}
-    x=\frac{u+v}{2},\qquad y=\frac{u-v}{2},\qquad
-    \di x\,\di y = \frac{1}{2}\,\di u\,\di v.
+    x=\dfrac{u+v}{2},\qquad y=\dfrac{u-v}{2},\qquad
+    \di x\,\di y = \dfrac{1}{2}\,\di u\,\di v.
 \end{equation}
 
-原积分区域 $x,y\in[-\pi/2,\pi/2]$ 映射为菱形区域
+原积分区域 $x,y\in\left[-\dfrac{\pi}{2},\dfrac{\pi}{2}\right]$ 映射为菱形区域
 \begin{equation}
     \Omega'=\{(u,v): |u|+|v|\leqslant \pi\}.
 \end{equation}
 
-代入式(\ref{eq:I_half_angle})，并利用 $\di x\,\di y=\frac{1}{2}\di u\,\di v$ 以及前面的系数4：
+代入式(\ref{eq:I_half_angle})，并利用 $\di x\,\di y=\dfrac{1}{2}\di u\,\di v$ 以及前面的系数4：
 \begin{equation}
     I(m,n;1)=2\iint_{\Omega'}
-    \frac{1-\cos(m(u+v))\cos(n(u-v))}
+    \frac{1-\cos[m(u+v)]\cos[n(u-v)]}
     {\sin u\,\sin v}
     \,\di u\,\di v.
     \label{eq:I_uv}
@@ -740,19 +740,17 @@
 
 利用积化和差公式展开分子：
 \begin{align}
-    &\cos(m(u+v))\cos(n(u-v)) \nonumber\\
-    &=\frac{1}{2}\left[\cos((m+n)u+(m-n)v)+\cos((m-n)u+(m+n)v)\right].
+    \cos[m(u+v)]\cos[n(u-v)]=\dfrac{1}{2}\left \{\cos[(m+n)u+(m-n)v]+\cos[(m-n)u+(m+n)v]\right \}.
     \label{eq:cos_product_expand}
 \end{align}
 
 记 $a=m+n,\ b=m-n$。式(\ref{eq:I_uv})变为
 \begin{align}
-    I(m,n;1)&=2\iint_{\Omega'}\frac{1}{\sin u\sin v}\,\di u\,\di v \nonumber\\
-    &\quad -\iint_{\Omega'}\frac{\cos(au+bv)+\cos(bu+av)}{\sin u\sin v}\,\di u\,\di v.
+    I(m,n;1)=2\iint_{\Omega'}\frac{1}{\sin u\sin v}\,\di u\,\di v -\iint_{\Omega'}\frac{\cos(au+bv)+\cos(bu+av)}{\sin u\sin v}\,\di u\,\di v.
     \label{eq:I_split}
 \end{align}
 
-第一项中，被积函数 $1/(\sin u\sin v)$ 关于 $u$ 和 $v$ 均为奇函数，而积分区域 $\Omega'$ 关于 $u=0$ 和 $v=0$ 对称，因此其主值积分为零：
+第一项中，被积函数 $\dfrac{1}{\sin u\sin v}$ 关于 $u$ 和 $v$ 均为奇函数，而积分区域 $\Omega'$ 关于 $u=0$ 和 $v=0$ 对称，因此其主值积分为零：
 \begin{equation}
     \iint_{\Omega'}\frac{1}{\sin u\sin v}\,\di u\,\di v=0.
     \label{eq:const_term_zero}
@@ -779,9 +777,7 @@
 \end{equation}
 式(\ref{eq:I_single_cos})分为两项：
 \begin{align}
-    I(m,n;1)
-    &=-2\iint_{\Omega'}\frac{\cos(au)\cos(bv)}{\sin u\sin v}\,\di u\,\di v \nonumber\\
-    &\quad +2\iint_{\Omega'}\frac{\sin(au)\sin(bv)}{\sin u\sin v}\,\di u\,\di v.
+    I(m,n;1)=-2\iint_{\Omega'}\frac{\cos(au)\cos(bv)}{\sin u\sin v}\,\di u\,\di v +2\iint_{\Omega'}\frac{\sin(au)\sin(bv)}{\sin u\sin v}\,\di u\,\di v.
     \label{eq:I_two_terms}
 \end{align}
 
@@ -794,7 +790,7 @@
 \begin{equation}
     \int_{-(\pi-|u|)}^{\pi-|u|} \frac{\cos(bv)}{\sin v}\,\di v = 0,
 \end{equation}
-因为被积函数 $\cos(bv)/\sin v$ 是 $v$ 的奇函数，而积分区间关于原点对称。因此整个二重积分为零。
+因为被积函数 $\dfrac{\cos(bv)}{\sin v}$ 是 $v$ 的奇函数，而积分区间关于原点对称。因此整个二重积分为零。
 因此只剩第二项：
 \begin{equation}
     I(m,n;1)=2\iint_{\Omega'}\frac{\sin(au)\sin(bv)}{\sin u\sin v}\,\di u\,\di v.
@@ -809,19 +805,18 @@
     \int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u
     \int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v
     =
-    \left(\int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u\right)
-    \left(\int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v\right).
+    \left[\int_{-\pi}^{\pi}\dfrac{\sin(au)}{\sin u}\,\di u\right]
+    \left[\int_{-\pi}^{\pi}\dfrac{\sin(bv)}{\sin v}\,\di v\right].
     \label{eq:I_separated}
 \end{equation}
 
-这里 $a=m+n,\ b=m-n$。
 
 
 
 
-\subsection{一维积分的计算与符号确定}
+\subsection{积分的计算与符号确定}
 
-对于任意整数 $K$，标准积分（主值意义下）为
+对于任意整数 $K$，Cauchy主值意义下的标准积分为
 \begin{equation}
     \int_{-\pi}^{\pi}\frac{\sin(K\theta)}{\sin\theta}\,\di\theta
     =
@@ -892,7 +887,7 @@
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{Cauchy主值积分.png}
-  \caption{临界频率下阻抗的数值验证}
+  \caption{临界频率下阻抗的数值验证($C=1\mathrm{F},L=1\mathrm{H}$)}
   \label{fig:Chauchy}
 \end{figure}
 
