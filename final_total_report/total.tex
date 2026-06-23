@@ -681,6 +681,56 @@ we investigate transport in two-dimensional infinite
 
 \subsection{问题背景与频域方程}
 
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[scale=1.2]
+    % 参数设置
+    \def\m{4} % x方向节点数
+    \def\n{3} % y方向节点数
+    \def\step{1.0} % 网格步长
+
+    % 绘制网格线（从(0,0)到(m,n)）
+    \draw[step=\step, thin, gray!50] (0,0) grid (\m,\n);
+
+    % 绘制横向电容（x方向）在每条水平网格线上
+    \foreach \y in {0,...,\n} {
+      \foreach \x in {0,...,\numexpr\m-1} {
+        \draw (\x,\y) to[C, l_=$C$, o-o] (\x+1,\y);
+      }
+    }
+
+    % 绘制纵向电感（y方向）在每条竖直网格线上
+    \foreach \x in {0,...,\m} {
+      \foreach \y in {0,...,\numexpr\n-1} {
+        \draw (\x,\y) to[L, l_=$L$, o-o] (\x,\y+1);
+      }
+    }
+
+    % 标注原点 (0,0)
+    \fill (0,0) circle (2.5pt);
+    \node[below left, xshift=-2pt] at (0,0) {$(0,0)$};
+
+    % 标注点 (m,n)
+    \fill (\m,\n) circle (2.5pt);
+    \node[above right, xshift=2pt] at (\m,\n) {$(m,n)$};
+
+    % 电流注入和流出箭头
+    \draw[->, thick, red] (0,0) -- ++(-0.6,0.6) node[above left] {$I$};
+    \draw[->, thick, blue] (\m,\n) -- ++(0.6,-0.6) node[below right] {$I$};
+
+    % 标注坐标轴方向
+    \draw[->, thick, gray!70] (-0.5,0) -- (\m+0.5,0) node[below] {$x$};
+    \draw[->, thick, gray!70] (0,-0.5) -- (0,\n+0.5) node[left] {$y$};
+
+  \end{tikzpicture}
+  \caption{二维 $LC$ 网格电路示意图}
+  \label{fig:LC_grid}
+\end{figure}
+
+
+
+
 考虑二维无穷网格：横向（$x$方向）由电容$C$连接，纵向（$y$方向）由电感$L$连接。在节点$(0,0)$注入交流电流$I$（角频率$\omega$），在$(m,n)$流出。任意节点的电势记为$V(x,y)$。
 
 根据KCL，推导可得频域电势
@@ -885,7 +935,7 @@ we investigate transport in two-dimensional infinite
         0, & m+n\ \text{为偶数}.
     \end{cases}
 \end{equation}
-同理，
+
 \begin{equation}
     \int_{-\pi}^{\pi}\frac{\sin(bv)}{\sin v}\,\di v
     =
@@ -895,7 +945,7 @@ we investigate transport in two-dimensional infinite
     \end{cases}
 \end{equation}
 
-两个积分均非零当且仅当 $m+n$ 和 $m-n$ 均为奇数，即 $m$ 与 $n$ 一奇一偶且 $m\neq n$。由式(\ref{eq:I_separated})，
+两个积分均非零当且仅当 $m+n$ 和 $m-n$ 均为奇数，即 $m$ 与 $n$ 一奇一偶。由式(\ref{eq:I_separated})，
 \begin{equation}
     I(m,n;1)=
     \left(\int_{-\pi}^{\pi}\frac{\sin(au)}{\sin u}\,\di u\right)
@@ -940,7 +990,17 @@ we investigate transport in two-dimensional infinite
   \label{fig:Chauchy}
 \end{figure}
 
+\subsection{零阻抗的应用前景}
 
+临界频率下奇偶性相同节点间阻抗为零的现象，在射频工程与传感技术中具有重要的应用价值。
+
+\begin{enumerate}
+    \item \textbf{零损耗射频信号传输}：传统微波传输线受导体损耗和介质损耗的制约，而临界频率下的 $LC$ 网格提供了一条无损信号路径\textsuperscript{\cite{444}}。通过选择奇偶性相同的节点对，信号可在理论上无耗地到达目标节点。该特性可应用于片上无线能量传输、可重构功率分配网络以及高效率射频前端的设计，显著降低系统功耗。
+    
+    \item \textbf{超灵敏传感与探测}：零阻抗节点对外部扰动极度敏感——若在该节点接入传感元件（如可变电容），其微小变化将打破零阻抗条件，导致阻抗发生剧烈跳变。这种突变可被高灵敏度检测，从而实现微弱物理/化学信号的放大机制，适用于生物分子检测、温度/压力传感以及网格缺陷定位等场景。
+\end{enumerate}
+
+此外，该现象为拓扑电路的室温实现提供了新思路：零阻抗路径对元件容差不敏感，可用于设计高鲁棒性的微波器件，并为高阶拓扑绝缘体的电路模拟奠定基础。
 
 
 \subsection{其他频率的讨论}
@@ -1013,6 +1073,12 @@ Application of the lattice Green's function for calculating the resistance of an
 English L~Q, Halchenko A, Palmero F.
 Topologically protected spatially localized modes: An easy experimental realization of the Su–Schrieffer–Heeger model[J].
 \textit{Physica B: Condensed Matter}, 2026, 734: 418616.
+
+\bibitem{444}
+Sahin H.
+Topoelectrical circuit theory and realizations of topological, non-linear, and non-Hermitian phenomena[D].
+Singapore: National University of Singapore, 2024.
+
 
 \end{thebibliography}
 
