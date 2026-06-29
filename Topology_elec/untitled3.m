@@ -4,7 +4,7 @@
 clear; clc; close all;
 
 %% 1. 参数设置
-L = 1; C = 1; omega = 1;
+L = 1; C = 1; omega = 100;
 
 % 扩大范围
 m_vals = -8:1:8;          % m 从 -8 到 8
@@ -59,7 +59,7 @@ function f = integrand_func(k1, k2, m, n)
     % 被积函数: [1 - cos(m*k1 + n*k2)] / [sin(k1/2)^2 - sin(k2/2)^2]
     theta = m * k1 + n * k2;
     numerator = 1 - cos(theta);
-    denom = sin(k1/2).^2 - sin(k2/2).^2;
+    denom = omega^2*C*L*sin(k1/2).^2 - sin(k2/2).^2;
     
     % 防止除零（在柯西主值中，奇点处用极限值）
     if abs(denom) < 1e-15
@@ -93,7 +93,7 @@ function pv = cauchy_principal_value_2d(m, n, N)
     % 计算被积函数
     theta = m * K1 + n * K2;
     numerator = 1 - cos(theta);
-    denom = sin(K1/2).^2 - sin(K2/2).^2;
+    denom = omega^2*L*C*sin(K1/2).^2 - sin(K2/2).^2;
     
     % 检测奇点（分母为零的点）
     singular_threshold = 1e-10;
