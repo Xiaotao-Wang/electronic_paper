@@ -1,377 +1,332 @@
-% 计算固定 n 时，Im[Z~(ω)] 随 m 和 ω²LC 的变化
-% 使用高精度柯西主值积分 - 生成独立图形版本
+%% 计算固定 (m,n) 时，积分值随 omega^2*L*C 的变化
+% 正确区分 ω²LC=1 和 ω²LC≠1 两种情况
 
 clear; clc; close all;
 
 %% 1. 参数设置
 L = 1; C = 1;
-n_fixed = 0;  % 固定 n (可以修改)
+m_fixed = 0;  % 固定 m
+n_fixed = 5;  % 固定 n
 
-% 变量范围
-omega_sq_LC_vals = linspace(0.999, 1.001, 1000);  % ω²LC 变化范围
-m_vals = -5:0.1:5;  % m 变化范围
+% omega^2*L*C 的变化范围（避免恰好等于1，单独处理）
+omega_sq_LC_vals = [linspace(0.999, 0.9999, 500), 1.0, linspace(1.0001, 1.001, 500)];
 
-% 高精度积分设置
-N_quad = 1000;  % 积分网格点数（平衡精度和速度）
+% 积分设置
+N_quad = 400;  % 每个方向的积分点数
 
-fprintf('========== 高精度柯西主值积分计算 ==========\n');
-fprintf('固定 n=%d，计算 Im[Z~(ω)] 随 (m, ω²LC) 的变化\n', n_fixed);
-fprintf('积分网格: %d × %d (高斯-勒让德求积)\n', N_quad, N_quad);
-fprintf('总计算点数: %d × %d = %d\n', length(m_vals), length(omega_sq_LC_vals), ...
-    length(m_vals)*length(omega_sq_LC_vals));
+fprintf('========== 柯西主值积分计算（修正版）==========\n');
+fprintf('固定 (m=%d, n=%d)\n', m_fixed, n_fixed);
+fprintf('特别处理 ω²LC = 1 的情况\n\n');
 
-% 生成高斯-勒让德节点和权重
-[x, w] = lgwt(N_quad, -pi, pi);
-[K1, K2] = meshgrid(x, x);
-[W1, W2] = meshgrid(w, w);
-weight_prod = W1 .* W2;
+% 生成均匀积分网格
+k1_vec = linspace(-pi, pi, N_quad);
+k2_vec = linspace(-pi, pi, N_quad);
+dk1 = k1_vec(2) - k1_vec(1);
+dk2 = k2_vec(2) - k2_vec(1);
+[K1, K2] = meshgrid(k1_vec, k2_vec);
+dA = dk1 * dk2;
 
-% 存储结果矩阵
-ImZ_matrix = zeros(length(m_vals), length(omega_sq_LC_vals));
+% 定义分子
+num = 1 - cos(m_fixed*K1) .* cos(n_fixed*K2);
 
+% 存储结果
+integral_values = zeros(size(omega_sq_LC_vals));
+ImZ_values = zeros(size(omega_sq_LC_vals));
+method_used = cell(size(omega_sq_LC_vals));
+
+fprintf('开始计算...\n');
 tic;
-fprintf('\n开始计算...\n');
 
-%% 对每个 (m, ω²LC) 组合计算柯西主值积分
-for mi = 1:length(m_vals)
-    m = m_vals(mi);
+%% 对每个 omega^2*L*C 值计算柯西主值积分
+for idx = 1:length(omega_sq_LC_vals)
+    omega_sq_LC = omega_sq_LC_vals(idx);
     
-    % 计算分子（与 ω²LC 无关，但与 m 有关）
-    num = 1 - cos(m*K1) .* cos(n_fixed*K2);
-    
-    for wi = 1:length(omega_sq_LC_vals)
-        omega_sq_LC = omega_sq_LC_vals(wi);
+    % ========== 情况1：ω²LC = 1（特殊处理）==========
+    if abs(omega_sq_LC - 1.0) < 1e-15
+        fprintf('========== 处理 ω²LC = 1.000000 ==========\n');
+        method_used{idx} = 'ω²LC=1特殊处理';
         
-        % 计算分母
+        % 此时分母为：sin²(k₁/2) - sin²(k₂/2)
+        % 奇点在 k₁ = ±k₂ + 2πn 处
+        denom = sin(K1/2).^2 - sin(K2/2).^2;
+        
+        % 分析奇点结构
+        fprintf('分母范围: [%.2e, %.2e]\n', min(denom(:)), max(denom(:)));
+        
+        % 方法1：分析积分 - 利用对称性和解析性质
+        % 由于被积函数在四个象限具有对称性，可以将积分区域缩小到第一象限
+        
+        % 先尝试去除奇点线的数值积分
+        % 奇点线: k₁ = k₂ 和 k₁ = -k₂
+        % 设定一个去除奇点线的宽度 δ
+        
+        delta_vals = logspace(-6, -1, 100);  % 不同的去除宽度
+        pv_estimates = zeros(size(delta_vals));
+        num_excluded = zeros(size(delta_vals));
+        
+        for di = 1:length(delta_vals)
+            delta = delta_vals(di);
+            
+            % 识别奇点线附近的点
+            % 奇点条件: |k₁ - k₂| < δ 或 |k₁ + k₂| < δ
+            % 同时考虑周期性: |k₁ - k₂ - 2π| < δ 等
+            
+            % 主对角线: k₁ ≈ k₂
+            near_main_diag = abs(K1 - K2) < delta | abs(K1 - K2 - 2*pi) < delta | abs(K1 - K2 + 2*pi) < delta;
+            % 反对角线: k₁ ≈ -k₂
+            near_anti_diag = abs(K1 + K2) < delta | abs(K1 + K2 - 2*pi) < delta | abs(K1 + K2 + 2*pi) < delta;
+            
+            exclude_mask = near_main_diag | near_anti_diag;
+            num_excluded(di) = sum(exclude_mask(:));
+            
+            % 如果排除的点太多（超过40%），这个delta太大，不适用
+            if num_excluded(di) > 0.4 * N_quad^2
+                pv_estimates(di) = NaN;
+                continue;
+            end
+            
+            % 计算排除奇点区域后的积分
+            valid_mask = ~exclude_mask;
+            f_valid = num(valid_mask) ./ denom(valid_mask);
+            pv_estimates(di) = sum(f_valid(:)) * dA;
+        end
+        
+        % 分析收敛性
+        valid_idx = ~isnan(pv_estimates);
+        if sum(valid_idx) > 5
+            % 取delta较小但排除点不太多的区间
+            % 选择num_excluded在合理范围内（1%-20%）的估计值
+            reasonable_idx = valid_idx & (num_excluded > 0.01*N_quad^2) & (num_excluded < 0.2*N_quad^2);
+            
+            if sum(reasonable_idx) > 3
+                integral_value = mean(pv_estimates(reasonable_idx));
+                std_val = std(pv_estimates(reasonable_idx));
+                fprintf('  奇点线去除法: %.6f ± %.6f (使用%d个估计值)\n', ...
+                    integral_value, std_val, sum(reasonable_idx));
+            else
+                % 如果没有足够的合理估计，使用所有有效估计
+                integral_value = mean(pv_estimates(valid_idx));
+                std_val = std(pv_estimates(valid_idx));
+                fprintf('  使用所有有效估计: %.6f ± %.6f\n', integral_value, std_val);
+            end
+        else
+            fprintf('  警告: 无法获得收敛的主值估计\n');
+            integral_value = 0;
+        end
+        
+        % 方法2：如果方法1不稳定，尝试变换变量法
+        % 利用 sin²(k₁/2) - sin²(k₂/2) = -sin((k₁+k₂)/2)·sin((k₁-k₂)/2)
+        % 但这里不展开，使用方法1的结果
+        
+    % ========== 情况2：ω²LC ≠ 1（正常处理）==========
+    else
+        method_used{idx} = 'ω²LC≠1处理';
+        
+        % 分母: ω²LC·sin²(k₁/2) - sin²(k₂/2)
         denom = omega_sq_LC * sin(K1/2).^2 - sin(K2/2).^2;
         
-        % ========== 严格等于1时使用特殊处理 ==========
-        if abs(omega_sq_LC - 1.0) < 1e-12
-            % 使用小的虚部微扰
-            eps_dist = 1e-9;
-            f_matrix = num ./ (denom + 1i * eps_dist);
-            f_real = real(f_matrix);
+        % 检查是否存在奇点（分母过零点）
+        denom_min = min(denom(:));
+        denom_max = max(denom(:));
+        
+        has_singularity = (denom_min * denom_max < 0);
+        
+        if has_singularity
+            % 存在奇点，使用对称去除法
             
-            % 处理奇异点区域
-            denom_abs = abs(denom);
-            singular_mask = denom_abs < 1e-4;
+            % 奇点条件: |denom| < epsilon
+            % 对于 ω²LC ≠ 1，奇点在
+            % k₂ = ±2·arcsin(√(ω²LC)·sin(k₁/2)) 处
             
-            if any(singular_mask(:))
-                [sing_i, sing_j] = find(singular_mask);
+            eps_vals = logspace(-10, -3, 80);
+            pv_estimates = zeros(size(eps_vals));
+            
+            for ei = 1:length(eps_vals)
+                epsilon = eps_vals(ei);
+                exclude_mask = abs(denom) < epsilon;
                 
-                % 对每个奇异点进行局部平均处理
-                for s = 1:min(length(sing_i), 500)
-                    i0 = sing_i(s);
-                    j0 = sing_j(s);
-                    
-                    radius = 10;
-                    i_range = max(1, i0-radius):min(N_quad, i0+radius);
-                    j_range = max(1, j0-radius):min(N_quad, j0+radius);
-                    
-                    if length(i_range) > 2 && length(j_range) > 2
-                        denom_local = sin(K1(i_range, j_range)/2).^2 - sin(K2(i_range, j_range)/2).^2;
-                        num_local = 1 - cos(m*K1(i_range, j_range)) .* cos(n_fixed*K2(i_range, j_range));
-                        f_local = real(num_local ./ (denom_local + 1i * 1e-10));
-                        
-                        valid_mask = abs(denom_local) > 1e-5;
-                        if sum(valid_mask(:)) > 10
-                            f_local(~valid_mask) = mean(f_local(valid_mask));
-                            f_real(i_range, j_range) = f_local;
-                        end
-                    end
+                % 控制排除区域大小
+                if sum(exclude_mask(:)) > 0.3 * N_quad^2
+                    pv_estimates(ei) = NaN;
+                    continue;
                 end
+                
+                % 去除小区域的积分
+                valid_mask = ~exclude_mask;
+                f_valid = num(valid_mask) ./ denom(valid_mask);
+                pv_estimates(ei) = sum(f_valid(:)) * dA;
             end
             
-            integral_value = sum(sum(f_real .* weight_prod));
-            ImZ_matrix(mi, wi) = -omega_sq_LC / (4 * pi^2) * integral_value;
-            continue;
-        end
-        
-        % ========== 正常积分计算 ==========
-        eps_dist = 1e-6;
-        f_matrix = real(num ./ (denom + 1i * eps_dist));
-        
-        % 检测并处理奇异点
-        denom_abs = abs(denom);
-        singular_mask = denom_abs < 1e-3;
-        
-        if any(singular_mask(:))
-            [sing_i, sing_j] = find(singular_mask);
-            
-            for s = 1:min(length(sing_i), 30)
-                i0 = sing_i(s);
-                j0 = sing_j(s);
-                
-                radius = 5;
-                i_range = max(1, i0-radius):min(N_quad, i0+radius);
-                j_range = max(1, j0-radius):min(N_quad, j0+radius);
-                
-                if length(i_range) > 2 && length(j_range) > 2
-                    denom_local = omega_sq_LC * sin(K1(i_range, j_range)/2).^2 - sin(K2(i_range, j_range)/2).^2;
-                    num_local = 1 - cos(m*K1(i_range, j_range)) .* cos(n_fixed*K2(i_range, j_range));
-                    f_local = real(num_local ./ (denom_local + 1i * 1e-6));
-                    
-                    valid_mask = abs(denom_local) > 1e-4;
-                    if sum(valid_mask(:)) > 5
-                        f_local(~valid_mask) = mean(f_local(valid_mask));
-                        f_matrix(i_range, j_range) = f_local;
-                    end
-                end
+            % 取收敛估计值
+            valid_est = ~isnan(pv_estimates);
+            if sum(valid_est) > 3
+                % 选择后几个估计值的平均
+                n_avg = min(10, sum(valid_est));
+                last_valid = find(valid_est, n_avg, 'last');
+                integral_value = mean(pv_estimates(last_valid));
+            else
+                % 如果所有epsilon都不合适，直接积分
+                integral_value = sum(num(:) ./ denom(:)) * dA;
             end
+        else
+            % 无奇点，直接积分
+            integral_value = sum(num(:) ./ denom(:)) * dA;
         end
-        
-        % 二维网格积分求和
-        integral_value = sum(sum(f_matrix .* weight_prod));
-        
-        % 存储结果
-        ImZ_matrix(mi, wi) = -omega_sq_LC / (4 * pi^2) * integral_value;
     end
     
+    % 存储结果
+    integral_values(idx) = integral_value;
+    ImZ_values(idx) = -omega_sq_LC / (4 * pi^2) * integral_value;
+    
     % 显示进度
-    fprintf('进度: m=%d (%d/%d) 完成, 耗时: %.1f秒\n', m, mi, length(m_vals), toc);
+    if mod(idx, 200) == 0 || idx == 1 || idx == length(omega_sq_LC_vals) || abs(omega_sq_LC - 1.0) < 1e-15
+        fprintf('  idx=%d, ω²LC=%.6f, Im[Z]=%.6f [%s]\n', ...
+            idx, omega_sq_LC, ImZ_values(idx), method_used{idx});
+    end
 end
 
 elapsed_time = toc;
 fprintf('\n计算完成！总耗时: %.2f 秒\n', elapsed_time);
 
-%% 生成网格数据
-[Omega_grid, M_grid] = meshgrid(omega_sq_LC_vals, m_vals);
-
-%% ==================== 图1：三维Mesh图 ====================
-figure('Name', '三维Mesh图', 'Position', [100, 100, 900, 700], 'Color', 'w');
-
-% 创建三维曲面图
-mesh(Omega_grid, M_grid, ImZ_matrix, 'FaceAlpha', 0.6);
-
-% 美化图形
-xlabel('$\omega^2 L C$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$m$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-zlabel('$\mathrm{Im}[\tilde{Z}(\omega)]$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 三维分布 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 16, 'FontWeight', 'bold');
-
-% 颜色映射
-colormap(jet(256));
-colorbar;
-caxis([-max(abs(ImZ_matrix(:))), max(abs(ImZ_matrix(:)))]);
-
-% 视角设置
-view(45, 30);
-grid on;
-box on;
-
-% 添加光源效果
-light('Position', [1, 1, 1], 'Style', 'infinite');
-lighting gouraud;
-material shiny;
-
-% 保存图形
-saveas(gcf, sprintf('3D_Mesh_n%d.png', n_fixed));
-fprintf('图1已保存: 3D_Mesh_n%d.png\n', n_fixed);
-
-%% ==================== 图2：m方向投影（固定omega） ====================
-figure('Name', 'm方向投影', 'Position', [100, 100, 800, 500], 'Color', 'w');
-
-% 选择几个代表性的omega值
-omega_indices = [1, round(length(omega_sq_LC_vals)/3), round(length(omega_sq_LC_vals)/2), ...
-                 round(2*length(omega_sq_LC_vals)/3), round(length(omega_sq_LC_vals)*0.9)];
-omega_selected = omega_sq_LC_vals(omega_indices);
-
-% 颜色映射
-colors = lines(length(omega_indices));
-
-hold on;
-for i = 1:length(omega_indices)
-    plot(m_vals, ImZ_matrix(:, omega_indices(i)), 'o-', ...
-        'Color', colors(i,:), 'LineWidth', 2, 'MarkerSize', 6, ...
-        'DisplayName', sprintf('\\omega^2LC = %.3f', omega_selected(i)));
+%% 输出 ω²LC = 1 的结果
+idx_1 = find(abs(omega_sq_LC_vals - 1.0) < 1e-15, 1);
+if ~isempty(idx_1)
+    fprintf('\n========== ω²LC = 1 计算结果 ==========\n');
+    fprintf('积分值 = %.8f\n', integral_values(idx_1));
+    fprintf('Im[Z~(ω)] = %.8f\n', ImZ_values(idx_1));
 end
-hold off;
 
-xlabel('$m$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$\mathrm{Im}[\tilde{Z}(\omega)]$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 随 $m$ 变化 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 16, 'FontWeight', 'bold');
+%% ==================== 绘图 ====================
 
-legend('Location', 'best', 'FontSize', 12);
+% 图1：完整范围
+figure('Position', [100, 100, 1200, 500]);
+
+% 子图1：积分值
+subplot(1, 2, 1);
+plot(omega_sq_LC_vals, integral_values, 'b-', 'LineWidth', 1.5);
+xlabel('ω²LC', 'FontSize', 12);
+ylabel('积分值（柯西主值）', 'FontSize', 12);
+title(sprintf('柯西主值积分 (m=%d, n=%d)', m_fixed, n_fixed));
 grid on;
-box on;
-
-% 添加零线
 hold on;
-plot([min(m_vals), max(m_vals)], [0, 0], 'k--', 'LineWidth', 1.5);
+xline(1, 'r--', 'LineWidth', 1.5);
+plot(omega_sq_LC_vals(idx_1), integral_values(idx_1), 'ro', ...
+    'MarkerSize', 10, 'LineWidth', 2);
 hold off;
 
-saveas(gcf, sprintf('Projection_m_n%d.png', n_fixed));
-fprintf('图2已保存: Projection_m_n%d.png\n', n_fixed);
-
-%% ==================== 图3：omega方向投影（固定m） ====================
-figure('Name', 'omega方向投影', 'Position', [100, 100, 800, 500], 'Color', 'w');
-
-% 选择几个代表性的m值
-m_selected_indices = [1, round(length(m_vals)/4), round(length(m_vals)/2), ...
-                      round(3*length(m_vals)/4), length(m_vals)];
-m_selected = m_vals(m_selected_indices);
-
-% 颜色映射
-colors = lines(length(m_selected_indices));
-
+% 子图2：Im[Z~(ω)]
+subplot(1, 2, 2);
+plot(omega_sq_LC_vals, ImZ_values, 'r-', 'LineWidth', 1.5);
+xlabel('ω²LC', 'FontSize', 12);
+ylabel('Im{Z~(ω)}', 'FontSize', 12);
+title(sprintf('Im{{Z~(ω)}} (m=%d, n=%d)', m_fixed, n_fixed));
+grid on;
 hold on;
-for i = 1:length(m_selected_indices)
-    plot(omega_sq_LC_vals, ImZ_matrix(m_selected_indices(i), :), 'o-', ...
-        'Color', colors(i,:), 'LineWidth', 2, 'MarkerSize', 6, ...
-        'DisplayName', sprintf('m = %.1f', m_selected(i)));
+xline(1, 'r--', 'LineWidth', 1.5);
+plot(omega_sq_LC_vals(idx_1), ImZ_values(idx_1), 'bo', ...
+    'MarkerSize', 10, 'LineWidth', 2);
+hold off;
+
+% 图2：ω²LC=1附近的放大图
+figure('Position', [200, 200, 800, 400]);
+near_1 = abs(omega_sq_LC_vals - 1.0) < 0.0005;
+plot(omega_sq_LC_vals(near_1), ImZ_values(near_1), 'b.-', ...
+    'LineWidth', 1.5, 'MarkerSize', 8);
+xlabel('ω²LC', 'FontSize', 12);
+ylabel('Im{Z~(ω)}', 'FontSize', 12);
+title(sprintf('Im{{Z~(ω)}} 在ω²LC=1附近 (m=%d, n=%d)', m_fixed, n_fixed));
+grid on;
+hold on;
+xline(1, 'r--', 'LineWidth', 1.5);
+plot(1, ImZ_values(idx_1), 'ro', 'MarkerSize', 12, 'LineWidth', 2);
+text(1.00005, ImZ_values(idx_1), sprintf('Im[Z] = %.6f', ImZ_values(idx_1)), ...
+    'FontSize', 10, 'BackgroundColor', 'w');
+hold off;
+
+%% 图3：不同m值的热力图
+figure('Position', [300, 300, 800, 400]);
+
+% 为多个m值计算（避免重复计算ω²LC=1的情况）
+m_range = -5:1:5;
+ImZ_matrix = zeros(length(m_range), length(omega_sq_LC_vals));
+
+fprintf('\n计算多m值热力图...\n');
+tic;
+
+for mi = 1:length(m_range)
+    m = m_range(mi);
+    num_temp = 1 - cos(m*K1) .* cos(n_fixed*K2);
+    
+    for idx = 1:length(omega_sq_LC_vals)
+        omega_sq_LC = omega_sq_LC_vals(idx);
+        
+        if abs(omega_sq_LC - 1.0) < 1e-15
+            % ω²LC = 1的情况
+            denom = sin(K1/2).^2 - sin(K2/2).^2;
+            
+            % 使用奇点线去除法
+            delta = 0.05;  % 固定一个合适的delta
+            near_main = abs(K1 - K2) < delta | abs(K1 - K2 - 2*pi) < delta | abs(K1 - K2 + 2*pi) < delta;
+            near_anti = abs(K1 + K2) < delta | abs(K1 + K2 - 2*pi) < delta | abs(K1 + K2 + 2*pi) < delta;
+            exclude_mask = near_main | near_anti;
+            
+            if sum(exclude_mask(:)) < 0.4 * N_quad^2
+                valid_mask = ~exclude_mask;
+                f_valid = num_temp(valid_mask) ./ denom(valid_mask);
+                integral_value = sum(f_valid(:)) * dA;
+            else
+                integral_value = 0;
+            end
+        else
+            % ω²LC ≠ 1的情况
+            denom = omega_sq_LC * sin(K1/2).^2 - sin(K2/2).^2;
+            
+            if min(denom(:)) * max(denom(:)) < 0
+                % 有奇点
+                epsilon = 1e-4;  % 固定epsilon
+                exclude_mask = abs(denom) < epsilon;
+                if sum(exclude_mask(:)) < 0.3 * N_quad^2
+                    valid_mask = ~exclude_mask;
+                    f_valid = num_temp(valid_mask) ./ denom(valid_mask);
+                    integral_value = sum(f_valid(:)) * dA;
+                else
+                    integral_value = sum(num_temp(:) ./ denom(:)) * dA;
+                end
+            else
+                integral_value = sum(num_temp(:) ./ denom(:)) * dA;
+            end
+        end
+        
+        ImZ_matrix(mi, idx) = -omega_sq_LC / (4 * pi^2) * integral_value;
+    end
+    
+    if mod(mi, 2) == 0
+        fprintf('  m=%d 完成\n', m);
+    end
 end
-hold off;
 
-xlabel('$\omega^2 L C$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$\mathrm{Im}[\tilde{Z}(\omega)]$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 随 $\\omega^2LC$ 变化 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 16, 'FontWeight', 'bold');
-
-legend('Location', 'best', 'FontSize', 12);
-grid on;
-box on;
-
-% 标记 omega^2LC = 1 的位置
-hold on;
-yl = ylim;
-plot([1, 1], yl, 'r--', 'LineWidth', 2, 'DisplayName', '\omega^2LC = 1');
-hold off;
-
-saveas(gcf, sprintf('Projection_omega_n%d.png', n_fixed));
-fprintf('图3已保存: Projection_omega_n%d.png\n', n_fixed);
-
-%% ==================== 图4：等高线图 ====================
-figure('Name', '等高线图', 'Position', [100, 100, 800, 600], 'Color', 'w');
-
-% 创建等高线图
-contourf(Omega_grid, M_grid, ImZ_matrix, 50, 'LineStyle', 'none');
-colormap(jet(256));
-colorbar;
-
-xlabel('$\omega^2 L C$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$m$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 等高线图 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 16, 'FontWeight', 'bold');
-
-% 添加等值线
-hold on;
-contour(Omega_grid, M_grid, ImZ_matrix, 10, 'k-', 'LineWidth', 1);
-% 标记零线
-contour(Omega_grid, M_grid, ImZ_matrix, [0, 0], 'k-', 'LineWidth', 2);
-% 标记 omega^2LC = 1
-plot([1, 1], [min(m_vals), max(m_vals)], 'r--', 'LineWidth', 2);
-hold off;
-
-grid on;
-box on;
-
-saveas(gcf, sprintf('Contour_n%d.png', n_fixed));
-fprintf('图4已保存: Contour_n%d.png\n', n_fixed);
-
-%% ==================== 图5：瀑布图（所有m值的omega方向投影） ====================
-figure('Name', '瀑布图', 'Position', [100, 100, 1000, 700], 'Color', 'w');
-
-% 创建瀑布图
-waterfall(Omega_grid, M_grid, ImZ_matrix);
-
-xlabel('$\omega^2 L C$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$m$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-zlabel('$\mathrm{Im}[\tilde{Z}(\omega)]$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 瀑布图 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 16, 'FontWeight', 'bold');
-
-colormap(jet(256));
-colorbar;
-view(-30, 45);
-grid on;
-box on;
-
-saveas(gcf, sprintf('Waterfall_n%d.png', n_fixed));
-fprintf('图5已保存: Waterfall_n%d.png\n', n_fixed);
-
-%% ==================== 图6：特定omega^2LC=1处，所有m的ImZ ====================
-figure('Name', 'omega²LC=1 处截面', 'Position', [100, 100, 800, 500], 'Color', 'w');
-
-% 找到最接近 omega^2LC=1 的索引
-[~, idx_1] = min(abs(omega_sq_LC_vals - 1.0));
-ImZ_at_one = ImZ_matrix(:, idx_1);
+fprintf('热力图计算完成，耗时: %.2f 秒\n', toc);
 
 % 绘制
-plot(m_vals, ImZ_at_one, 'b-o', 'LineWidth', 2, 'MarkerSize', 8, 'MarkerFaceColor', 'b');
-xlabel('$m$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-ylabel('$\mathrm{Im}[\tilde{Z}(\omega)]$', 'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-title(sprintf('$\\mathrm{Im}[\\tilde{Z}(\\omega)]$ 在 $\\omega^2LC=1$ 处随 $m$ 变化 (固定 $n=%d$)', n_fixed), ...
-    'Interpreter', 'latex', 'FontSize', 14, 'FontWeight', 'bold');
-
-grid on;
-box on;
-
-% 标记零点
+imagesc(omega_sq_LC_vals, m_range, ImZ_matrix);
+colormap(jet(256));
+clim_max = max(abs(ImZ_matrix(:)));
+caxis([-clim_max, clim_max]);
+colorbar;
+xlabel('ω²LC', 'FontSize', 12);
+ylabel('m', 'FontSize', 12);
+title(sprintf('Im{{Z~(ω)}} 热力图 (n=%d)', n_fixed));
+set(gca, 'YDir', 'normal');
 hold on;
-plot([min(m_vals), max(m_vals)], [0, 0], 'k--', 'LineWidth', 1.5);
+xline(1, 'k--', 'LineWidth', 2);
 hold off;
-
-% 标记特殊点
-[max_val, max_idx] = max(ImZ_at_one);
-[min_val, min_idx] = min(ImZ_at_one);
-hold on;
-plot(m_vals(max_idx), max_val, 'r*', 'MarkerSize', 15, 'LineWidth', 2);
-plot(m_vals(min_idx), min_val, 'g*', 'MarkerSize', 15, 'LineWidth', 2);
-text(m_vals(max_idx)+0.2, max_val, sprintf('Max: %.3f', max_val), 'FontSize', 10, 'Color', 'r');
-text(m_vals(min_idx)+0.2, min_val, sprintf('Min: %.3f', min_val), 'FontSize', 10, 'Color', 'g');
-hold off;
-
-saveas(gcf, sprintf('At_omega2LC1_n%d.png', n_fixed));
-fprintf('图6已保存: At_omega2LC1_n%d.png\n', n_fixed);
 
 %% 输出统计信息
 fprintf('\n========== 统计信息 ==========\n');
-fprintf('固定 n = %d\n', n_fixed);
-fprintf('m 范围: %.1f 到 %.1f (共 %d 个点)\n', min(m_vals), max(m_vals), length(m_vals));
-fprintf('ω²LC 范围: %.3f 到 %.3f (共 %d 个点)\n', min(omega_sq_LC_vals), max(omega_sq_LC_vals), length(omega_sq_LC_vals));
-fprintf('积分网格: %d × %d\n', N_quad, N_quad);
-fprintf('Im[Z] 全局范围: %.4f 到 %.4f\n', min(ImZ_matrix(:)), max(ImZ_matrix(:)));
-fprintf('Im[Z] 均值: %.4f\n', mean(ImZ_matrix(:)));
-fprintf('Im[Z] 标准差: %.4f\n', std(ImZ_matrix(:)));
-fprintf('在 ω²LC=1 处 Im[Z] 范围: %.4f 到 %.4f\n', min(ImZ_at_one), max(ImZ_at_one));
+fprintf('总点数: %d\n', length(omega_sq_LC_vals));
+fprintf('ω²LC=1处的Im[Z]: %.6f\n', ImZ_values(idx_1));
+fprintf('Im[Z]范围: [%.6f, %.6f]\n', min(ImZ_values), max(ImZ_values));
+fprintf('Im[Z]均值: %.6f\n', mean(ImZ_values(~isnan(ImZ_values))));
+fprintf('Im[Z]标准差: %.6f\n', std(ImZ_values(~isnan(ImZ_values))));
 
-%% 自定义高斯-勒让德求积节点和权重函数
-function [x, w] = lgwt(N, a, b)
-    % 初始猜测（使用切比雪夫节点）
-    x = cos(pi * (4*(1:N)' - 1) / (4*N + 2));
-    epsilon = 1e-15;
-    
-    % Newton-Raphson迭代
-    for iter = 1:100
-        P_prev = 1;
-        P_curr = x;
-        P_der_prev = 0;
-        P_der_curr = 1;
-        
-        for k = 2:N
-            P_next = ((2*k-1)*x.*P_curr - (k-1)*P_prev) / k;
-            P_der_next = ((2*k-1)*(P_curr + x.*P_der_curr) - (k-1)*P_der_prev) / k;
-            
-            P_prev = P_curr;
-            P_curr = P_next;
-            P_der_prev = P_der_curr;
-            P_der_curr = P_der_next;
-        end
-        
-        dx = P_curr ./ P_der_curr;
-        x = x - dx;
-        
-        if max(abs(dx)) < epsilon
-            break;
-        end
-    end
-    
-    % 计算权重
-    w = 2 ./ ((1 - x.^2) .* P_der_curr.^2);
-    
-    % 映射到区间 [a, b]
-    x = 0.5 * (a + b) + 0.5 * (b - a) * x;
-    w = 0.5 * (b - a) * w;
-end
+fprintf('\n========== 完成 ==========\n');
