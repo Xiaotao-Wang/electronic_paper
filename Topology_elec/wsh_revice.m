@@ -4,12 +4,12 @@
 clear; clc; close all;
 
 %% 1. 参数设置（保留你原本的离散参数，用于计算Z、三维图和红蓝热力图）
-L = 1; C = 1; omega = 1.01;
+L = 1; C = 1; omega = 10;
 omega_sq_LC = omega^2 * L * C;  % omega²LC
 
 % 离散范围
-m_vals = -8:1:8;
-n_vals = -8:1:8;
+m_vals = -20:1:20;
+n_vals = -20:1:20;
 
 % 高精度积分设置
 N_quad = 500;  % 积分网格点数（500x500 足够保证主值精确度）
